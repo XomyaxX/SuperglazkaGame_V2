@@ -57,8 +57,8 @@ const RunnerGame = (function(){
     resize();
     
     // Load player sprites
-    spriteRun.src = 'assets/images/glazka_run.png';
-    spriteJump.src = 'assets/images/glazka_jump.png';
+    spriteRun.src = 'assets/shared/games/runner-run.png';
+    spriteJump.src = 'assets/shared/games/runner-jump.png';
     
     let loadedCount = 0;
     const onSpriteLoad = () => {

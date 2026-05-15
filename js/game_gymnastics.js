@@ -69,7 +69,7 @@ const GymGame = (function(){
     video.onerror = () => {
       video.style.display = 'none';
       const img = document.createElement('img');
-      img.src = 'assets/images/lenivus.png';
+      img.src = 'assets/shared/characters/lenivus.png';
       img.className = 'boss-bg-video';
       img.style.cssText = video.style.cssText;
       video.parentNode.insertBefore(img, video);

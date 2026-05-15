@@ -22,9 +22,6 @@ open index.html
 
 # Открыть приложение (комикс + игры)
 open app.html
-
-# Открыть современную версию комикса
-open superglazka.html
 ```
 
 ## 📁 Структура проекта
@@ -32,23 +29,31 @@ open superglazka.html
 ```
 ├── index.html           # Главная страница (landing page)
 ├── app.html             # Приложение: меню + комикс + игры
-├── superglazka.html     # Альтернативная версия комикса
 ├── css/
 │   ├── style.css        # Стили приложения
-│   ├── modern.css       # Современные стили
-│   ├── comic.css        # Стили комикса
 │   └── landing.css      # Стили landing page
 ├── js/
 │   ├── app.js           # Ядро приложения
-│   ├── player.js        # Плеер
+│   ├── player.js        # Профиль игрока
+│   ├── episodes/        # Данные эпизодов
+│   │   ├── episode-01.js
+│   │   ├── episode-02.js
+│   │   └── index.js     # Реестр эпизодов
 │   ├── game_runner.js   # Игра "Погоня"
 │   ├── game_gymnastics.js # Игра "Гимнастика"
 │   ├── game_blink.js    # Игра "Моргание"
 │   └── game_tracker.js  # Игра "Трекер"
 ├── assets/
-│   ├── images/          # Картинки кадров и персонажей
-│   ├── audio/           # Озвучка
-│   └── videos/          # Видеовставки
+│   ├── shared/          # Общие ресурсы
+│   │   ├── characters/  # Персонажи
+│   │   └── games/       # Спрайты игр
+│   └── episodes/        # Контент по эпизодам
+│       ├── episode-01/
+│       │   ├── cover.png
+│       │   └── frames/  # Кадры с image.png, narration.mp3, video.mp4
+│       ├── episode-02/
+│       └── episode-03/
+├── incoming/            # 📥 Новые файлы для интеграции
 ├── VIDEO_PROMPTS.md     # Промпты для AI-видео
 └── README.md           # Этот файл
 ```
@@ -65,6 +70,13 @@ open superglazka.html
 - Упражнение «Маятник» — следи за мячиком
 - Упражнение «Бабочка» — моргай в ритм
 - Победи Ленивуса и спаси Мир Глазки!
+
+## 📥 Как добавить новый эпизод
+
+1. Положи исходные файлы в папку `incoming/episode-XX/` (см. `incoming/README.md`)
+2. Я сам рассортирую файлы по `assets/episodes/episode-XX/`
+3. Создам `js/episodes/episode-XX.js` с данными кадров
+4. Добавлю эпизод в `js/episodes/index.js`
 
 ## 🎨 Дизайн-система
 

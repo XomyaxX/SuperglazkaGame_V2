@@ -185,14 +185,14 @@
 <div class="overlay" id="game-overlay-gym">
   <video class="boss-bg-video" id="boss-video" autoplay muted loop playsinline preload="auto">
     <source src="assets/videos/lenivus.mp4" type="video/mp4">
-    <img src="assets/images/lenivus.png" class="boss-bg-video" alt="Ленивус">
+    <img src="assets/shared/characters/lenivus.png" class="boss-bg-video" alt="Ленивус">
   </video>
   <div class="boss-overlay-darken"></div>
   <div class="gym-header-new">
     <div class="boss-hp-display"><span class="boss-label">👁️ ЛЕНИВУС</span><div class="boss-hp-bar-large"><div class="boss-hp-fill-large" id="boss-hp-fill" style="width:100%"></div></div></div>
     <div class="rays-counter-new"><span class="rays-label">Лучики</span><span class="rays-icons" id="gym-rays">⚪⚪⚪</span></div>
   </div>
-  <div class="player-vanya" id="player-vanya"><img src="assets/images/Vanya.png" alt="Ваня"><div class="player-charge-indicator" id="player-charge"></div></div>
+  <div class="player-vanya" id="player-vanya"><img src="assets/shared/characters/vanya.png" alt="Ваня"><div class="player-charge-indicator" id="player-charge"></div></div>
   <div class="attack-effects" id="attack-effects"></div>
   <div class="phase-controls" id="phase-container"></div>
   <button class="skip-btn" onclick="closeGym(true)">Пропустить ▸</button>
@@ -315,6 +315,9 @@
      SCRIPTS
      ═══════════════════════════════════════════════════════════ -->
 <script src="js/player.js"></script>
+<script src="js/episodes/episode-01.js"></script>
+<script src="js/episodes/episode-02.js"></script>
+<script src="js/episodes/index.js"></script>
 <script src="js/app.js"></script>
 <script src="js/game_runner.js"></script>
 <script src="js/game_gymnastics.js"></script>
