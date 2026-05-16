@@ -90,18 +90,89 @@
      EPISODE VIEWER
      ═══════════════════════════════════════════════════════════ -->
 <div id="episode-viewer">
-  <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
-  <div class="frame-counter">Кадр 1 из 12</div>
-  <button class="back-btn" title="Назад в меню">←</button>
-  <button class="profile-btn viewer-profile-btn" title="Профиль">
-    <span>👤</span>
-    <span class="profile-label">Профиль</span>
-    <span class="profile-coins-val">0</span>
-    <span>🪙</span>
-  </button>
+  <!-- ═══════════════════════════════════════════════════════════
+       TOP BAR
+       ═══════════════════════════════════════════════════════════ -->
+  <div class="frame-top-bar" id="frameTopBar">
+    <button class="back-btn" id="viewerBackBtn" title="Назад в меню">←</button>
+    <div class="progress-dots" id="progressDots"></div>
+    <button class="profile-btn" id="viewerProfileBtn" title="Профиль">
+      <span>👤</span>
+      <span class="profile-coins-val">0</span>
+      <span>🪙</span>
+    </button>
+  </div>
 
   <!-- Dynamic frame container -->
   <div id="frame-container"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       BOTTOM SHEET
+       ═══════════════════════════════════════════════════════════ -->
+  <div class="bottom-sheet collapsed" id="bottomSheet">
+    <div class="bs-drag-handle" id="bsDragHandle">⠿</div>
+    <div class="bs-subtitle" id="bsSubtitle">
+      <span class="bs-subtitle-icon" id="bsSubtitleIcon">🎙️</span>
+      <span class="bs-subtitle-text" id="bsSubtitleText"></span>
+    </div>
+    <div class="bs-controls" id="bsControls">
+      <button class="bs-audio-toggle" id="bsAudioToggle" title="Аудио меню">🔊</button>
+      <div class="bs-game-dock" id="bsGameDock"></div>
+      <button class="bs-next-btn" id="bsNextBtn">Далее →</button>
+    </div>
+    <div class="bs-expanded" id="bsExpanded">
+      <div class="bs-narrator-full" id="bsNarratorFull"></div>
+
+      <div class="bs-audio-panel" id="bsAudioPanel">
+        <div class="bs-section-title">🎵 Аудио</div>
+        <div class="bs-track-row" id="bsTrackNarration">
+          <div class="bs-track-info">
+            <div class="bs-track-icon" id="bsIconNarration">🎙️</div>
+            <div class="bs-track-meta">
+              <div class="bs-track-name">Рассказчик</div>
+              <div class="bs-track-status" id="bsStatusNarration">Выкл</div>
+            </div>
+          </div>
+          <div class="bs-toggle" id="bsToggleNarration"></div>
+        </div>
+        <div class="bs-track-row" id="bsTrackDialogue">
+          <div class="bs-track-info">
+            <div class="bs-track-icon" id="bsIconDialogue">🗣️</div>
+            <div class="bs-track-meta">
+              <div class="bs-track-name">Диалоги</div>
+              <div class="bs-track-status" id="bsStatusDialogue">Выкл</div>
+            </div>
+          </div>
+          <div class="bs-toggle" id="bsToggleDialogue"></div>
+        </div>
+        <div class="bs-track-row" id="bsTrackVideo">
+          <div class="bs-track-info">
+            <div class="bs-track-icon" id="bsIconVideo">🎬</div>
+            <div class="bs-track-meta">
+              <div class="bs-track-name">Видео</div>
+              <div class="bs-track-status" id="bsStatusVideo">Выкл</div>
+            </div>
+          </div>
+          <div class="bs-toggle" id="bsToggleVideo"></div>
+        </div>
+        <div class="bs-volume-row">
+          <span class="vol-icon">🔉</span>
+          <input type="range" class="bs-volume-slider" id="bsVolumeSlider" min="0" max="100" value="80">
+          <span class="vol-icon">🔊</span>
+        </div>
+      </div>
+
+      <div class="bs-game-panel" id="bsGamePanel">
+        <div class="bs-section-title">🎮 Мини-игры</div>
+        <div id="bsGamePanelInner"></div>
+      </div>
+
+      <div class="bs-nav">
+        <button class="bs-nav-btn" id="bsPrevBtn">◀ Назад</button>
+        <button class="bs-nav-btn" id="bsNavNextBtn">Далее ▶</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════

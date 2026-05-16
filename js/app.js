@@ -1,46 +1,416 @@
 /* ═══════════════════════════════════════════════════════════
-   СУПЕРГЛАЗКА — Data-Driven Episode Engine
+   СУПЕРГЛАЗКА — Stories Pro Engine
    ═══════════════════════════════════════════════════════════ */
 
+const SPEAKER_NAMES = {
+  hrust: "Мудрый Хрусталик",
+  sovet: "Советник",
+  dev: "Девочка",
+  tolpa: "Толпа",
+  nar: "Рассказчик"
+};
+
+const GAME_NAMES = { blink: 'Моргай-зарядка', tracker: 'Трекер-взгляд' };
+const GAME_ICONS = { blink: '⚡', tracker: '👀' };
+
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ═══════════════════════════════════════════════════════════
+// AUDIO CONTROLLER — unified audio mixer
+// ═══════════════════════════════════════════════════════════
+const AudioController = {
+  queue: [],
+  currentIdx: 0,
+  currentAudio: null,
+  state: 'idle',
+  activeTracks: { narration: true, dialogue: true, video: false },
+  volume: 0.8,
+  timeoutId: null,
+  frameData: null,
+
+  setFrameData(frameData) {
+    this.frameData = frameData;
+    this.stop();
+    this.currentIdx = 0;
+    this.buildQueue();
+  },
+
+  buildQueue() {
+    this.queue = [];
+    if (this.activeTracks.narration && this.frameData?.audioSrc) {
+      this.queue.push({ type: 'narration', src: this.frameData.audioSrc });
+    }
+    if (this.activeTracks.dialogue && this.frameData?.dialogueAudio?.length) {
+      this.frameData.dialogueAudio.forEach(src => {
+        this.queue.push({ type: 'dialogue', src });
+      });
+    }
+  },
+
+  play() {
+    if (this.state === 'video') return;
+    if (this.queue.length === 0) {
+      this.state = 'idle';
+      this.onQueueEnd();
+      return;
+    }
+    this.state = 'playing';
+    this.playNext();
+  },
+
+  playNext() {
+    if (this.currentIdx >= this.queue.length) {
+      this.stopCurrent();
+      this.state = 'idle';
+      this.onQueueEnd();
+      return;
+    }
+    const item = this.queue[this.currentIdx];
+    const audio = new Audio(item.src);
+    audio.volume = this.volume;
+    audio.preload = 'auto';
+    this.currentAudio = audio;
+
+    audio.onended = () => {
+      this.clearTimeout();
+      this.currentIdx++;
+      this.playNext();
+    };
+    audio.onerror = () => {
+      console.warn('Audio failed:', item.src);
+      this.clearTimeout();
+      this.currentIdx++;
+      this.playNext();
+    };
+
+    audio.play().catch(err => {
+      console.warn('Audio play failed:', item.src, err);
+      this.clearTimeout();
+      this.currentIdx++;
+      this.playNext();
+    });
+
+    this.timeoutId = setTimeout(() => {
+      if (this.currentAudio) {
+        console.warn('Audio timeout, skipping:', item.src);
+        this.currentIdx++;
+        this.playNext();
+      }
+    }, 30000);
+
+    this.updateUI();
+  },
+
+  stopCurrent() {
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio = null;
+    }
+    this.clearTimeout();
+  },
+
+  clearTimeout() {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
+    }
+  },
+
+  pause() {
+    if (this.currentAudio && this.state === 'playing') {
+      this.currentAudio.pause();
+      this.state = 'paused';
+      this.updateUI();
+    }
+  },
+
+  resume() {
+    if (this.currentAudio && this.state === 'paused') {
+      this.currentAudio.play().catch(() => {});
+      this.state = 'playing';
+      this.updateUI();
+    } else if ((this.state === 'idle' || this.state === 'paused') && this.queue.length > 0) {
+      this.play();
+    }
+  },
+
+  stop() {
+    this.stopCurrent();
+    this.state = 'idle';
+    this.currentIdx = 0;
+    this.updateUI();
+  },
+
+  toggleTrack(type) {
+    this.activeTracks[type] = !this.activeTracks[type];
+
+    if (type === 'video') {
+      const video = document.querySelector('.frame.active video');
+      if (this.activeTracks.video) {
+        this.pause();
+        this.state = 'video';
+        if (video) {
+          video.muted = false;
+          video.play().catch(() => {});
+        }
+      } else {
+        this.state = 'idle';
+        if (video) {
+          video.pause();
+          video.currentTime = 0;
+        }
+        this.play();
+      }
+    } else {
+      const wasPlaying = this.state === 'playing';
+      this.stop();
+      this.buildQueue();
+      if (wasPlaying && !this.activeTracks.video) {
+        this.play();
+      }
+    }
+    this.updateUI();
+  },
+
+  playVideo(videoEl) {
+    this.stop();
+    this.state = 'video';
+    this.activeTracks.video = true;
+    this.activeTracks.narration = false;
+    this.activeTracks.dialogue = false;
+    videoEl.muted = false;
+    this.updateUI();
+  },
+
+  onVideoEnded() {
+    if (this.state === 'video') {
+      this.activeTracks.video = false;
+      this.activeTracks.narration = true;
+      this.activeTracks.dialogue = true;
+      this.state = 'idle';
+      this.buildQueue();
+      this.play();
+      this.updateUI();
+    }
+  },
+
+  onQueueEnd() {
+    if (typeof App !== 'undefined' && App.onAudioEnd) {
+      App.onAudioEnd();
+    }
+  },
+
+  setVolume(v) {
+    this.volume = v / 100;
+    if (this.currentAudio) this.currentAudio.volume = this.volume;
+    const video = document.querySelector('.frame.active video');
+    if (video) video.volume = this.volume;
+  },
+
+  updateUI() {
+    const narrStatus = document.getElementById('bsStatusNarration');
+    const dialStatus = document.getElementById('bsStatusDialogue');
+    const vidStatus = document.getElementById('bsStatusVideo');
+    if (narrStatus) narrStatus.textContent = this.activeTracks.narration ? 'Вкл' : 'Выкл';
+    if (dialStatus) dialStatus.textContent = this.activeTracks.dialogue ? 'Вкл' : 'Выкл';
+    if (vidStatus) vidStatus.textContent = this.activeTracks.video ? 'Вкл' : 'Выкл';
+
+    const narrToggle = document.getElementById('bsToggleNarration');
+    const dialToggle = document.getElementById('bsToggleDialogue');
+    const vidToggle = document.getElementById('bsToggleVideo');
+    if (narrToggle) narrToggle.classList.toggle('active', this.activeTracks.narration);
+    if (dialToggle) dialToggle.classList.toggle('active', this.activeTracks.dialogue);
+    if (vidToggle) vidToggle.classList.toggle('active', this.activeTracks.video);
+
+    const narrIcon = document.getElementById('bsIconNarration');
+    const dialIcon = document.getElementById('bsIconDialogue');
+    const vidIcon = document.getElementById('bsIconVideo');
+    if (narrIcon) narrIcon.classList.toggle('playing', this.state === 'playing' && this.currentIdx === 0);
+    if (dialIcon) dialIcon.classList.toggle('playing', this.state === 'playing' && this.currentIdx > 0);
+    if (vidIcon) vidIcon.classList.toggle('playing', this.state === 'video');
+
+    const btn = document.getElementById('bsAudioToggle');
+    if (btn) {
+      btn.classList.toggle('playing', this.state === 'playing' || this.state === 'video');
+      if (this.state === 'video') btn.textContent = '🎬';
+      else if (this.state === 'playing') btn.textContent = '⏸';
+      else btn.textContent = '🔊';
+    }
+  }
+};
+
+// ═══════════════════════════════════════════════════════════
+// BOTTOM SHEET — unified bottom panel
+// ═══════════════════════════════════════════════════════════
+const BottomSheet = {
+  state: 'collapsed',
+
+  init() {
+    this.el = document.getElementById('bottomSheet');
+    this.dragHandle = document.getElementById('bsDragHandle');
+    this.subtitleText = document.getElementById('bsSubtitleText');
+    this.subtitleIcon = document.getElementById('bsSubtitleIcon');
+    this.narratorFull = document.getElementById('bsNarratorFull');
+    this.gameDock = document.getElementById('bsGameDock');
+    this.gamePanelInner = document.getElementById('bsGamePanelInner');
+    this.nextBtn = document.getElementById('bsNextBtn');
+    this.navNextBtn = document.getElementById('bsNavNextBtn');
+    this.prevBtn = document.getElementById('bsPrevBtn');
+
+    this.dragHandle.addEventListener('click', () => this.toggle());
+    this.el.addEventListener('click', (e) => {
+      if (e.target === this.el || e.target.classList.contains('bs-subtitle')) {
+        this.expand();
+      }
+    });
+
+    const audioToggle = document.getElementById('bsAudioToggle');
+    if (audioToggle) {
+      audioToggle.addEventListener('click', () => {
+        if (AudioController.state === 'playing') AudioController.pause();
+        else if (AudioController.state === 'paused') AudioController.resume();
+        else if (AudioController.state === 'video') AudioController.toggleTrack('video');
+        else AudioController.play();
+      });
+    }
+
+    ['Narration', 'Dialogue', 'Video'].forEach(type => {
+      const toggle = document.getElementById('bsToggle' + type);
+      if (toggle) toggle.addEventListener('click', () => AudioController.toggleTrack(type.toLowerCase()));
+    });
+
+    const volSlider = document.getElementById('bsVolumeSlider');
+    if (volSlider) volSlider.addEventListener('input', (e) => AudioController.setVolume(e.target.value));
+
+    if (this.nextBtn) this.nextBtn.addEventListener('click', () => App.nextFrame());
+    if (this.navNextBtn) this.navNextBtn.addEventListener('click', () => App.nextFrame());
+    if (this.prevBtn) this.prevBtn.addEventListener('click', () => App.prevFrame());
+
+    this.initDrag();
+  },
+
+  toggle() { this.state === 'collapsed' ? this.expand() : this.collapse(); },
+  expand() { this.state = 'expanded'; this.el.classList.remove('collapsed'); },
+  collapse() { this.state = 'collapsed'; this.el.classList.add('collapsed'); },
+
+  setSubtitle(text, icon) {
+    if (this.subtitleText) this.subtitleText.textContent = text || '';
+    if (this.subtitleIcon && icon) this.subtitleIcon.textContent = icon;
+  },
+
+  setNarratorFull(text) {
+    if (this.narratorFull) this.narratorFull.textContent = text || '';
+  },
+
+  showNextButton(text) {
+    if (this.nextBtn) {
+      this.nextBtn.classList.add('active');
+      if (text) this.nextBtn.textContent = text + ' →';
+    }
+    if (this.navNextBtn) this.navNextBtn.classList.add('active');
+  },
+
+  hideNextButton() {
+    if (this.nextBtn) {
+      this.nextBtn.classList.remove('active');
+      this.nextBtn.textContent = 'Далее →';
+    }
+    if (this.navNextBtn) this.navNextBtn.classList.remove('active');
+  },
+
+  renderGameDock(games) {
+    if (!this.gameDock) return;
+    this.gameDock.innerHTML = '';
+    if (!games || games.length === 0) return;
+    games.forEach(g => {
+      const chip = document.createElement('button');
+      chip.className = 'game-chip';
+      chip.title = GAME_NAMES[g] || g;
+      chip.innerHTML = `<span class="game-chip-icon">${GAME_ICONS[g] || '🎮'}</span>`;
+      chip.addEventListener('click', () => App.startGame(g));
+      this.gameDock.appendChild(chip);
+    });
+  },
+
+  renderGamePanel(games) {
+    if (!this.gamePanelInner) return;
+    this.gamePanelInner.innerHTML = '';
+    if (!games || games.length === 0) {
+      this.gamePanelInner.innerHTML = '<div style="color:rgba(255,255,255,0.4);font-size:13px;">Нет доступных игр на этом кадре</div>';
+      return;
+    }
+    games.forEach(g => {
+      const chip = document.createElement('button');
+      chip.className = 'bs-game-chip';
+      chip.innerHTML = `<span class="bs-game-chip-icon">${GAME_ICONS[g] || '🎮'}</span><span>${GAME_NAMES[g] || g}</span>`;
+      chip.addEventListener('click', () => App.startGame(g));
+      this.gamePanelInner.appendChild(chip);
+    });
+  },
+
+  initDrag() {
+    let startY = 0;
+    const onStart = (y) => { startY = y; };
+    const onEnd = (y) => {
+      const delta = startY - y;
+      if (delta > 40) this.expand();
+      else if (delta < -40) this.collapse();
+    };
+    this.dragHandle.addEventListener('touchstart', (e) => onStart(e.touches[0].clientY), {passive: true});
+    this.dragHandle.addEventListener('touchend', (e) => onEnd(e.changedTouches[0].clientY), {passive: true});
+    this.dragHandle.addEventListener('mousedown', (e) => onStart(e.clientY));
+    this.dragHandle.addEventListener('mouseup', (e) => onEnd(e.clientY));
+  }
+};
+
+// ═══════════════════════════════════════════════════════════
+// APP CORE
+// ═══════════════════════════════════════════════════════════
 const App = (function() {
   'use strict';
 
-  // ═══════════════════════════════════════════════════════════
-  // EPISODE DATA CONFIG
-  // ═══════════════════════════════════════════════════════════
-  // Данные эпизодов загружаются из js/episodes/*.js
-  // EPISODES определён в js/episodes/index.js
-
-  // ═══════════════════════════════════════════════════════════
-  // STATE
-  // ═══════════════════════════════════════════════════════════
   let currentEpisode = null;
   let currentFrameIdx = 0;
   let frames = [];
   let gameAdvancePending = false;
-  let isPlayingAudio = false;
-  let audioTimeout = null;
-  let currentAudioEl = null;
-  let currentPhase = 'narration';
   let typeWriterInterval = null;
   let dialogueTimeouts = [];
-  let swipeHintTimeout = null;
+  let audioEndedForFrame = false;
+  let typewriterEndedForFrame = false;
+  let uiHideTimeout = null;
 
-  // ═══════════════════════════════════════════════════════════
-  // DOM REFS
-  // ═══════════════════════════════════════════════════════════
   const mainMenu = document.getElementById('main-menu');
   const episodeViewer = document.getElementById('episode-viewer');
   const splash = document.getElementById('splash');
   const startBtn = document.getElementById('startBtn');
   const frameContainer = document.getElementById('frame-container');
-  const progressFill = document.querySelector('.progress-fill');
-  const frameCounter = document.querySelector('.frame-counter');
-  const transitionOverlay = document.getElementById('transition-overlay');
 
-  // ═══════════════════════════════════════════════════════════
-  // RENDER FRAME
-  // ═══════════════════════════════════════════════════════════
+  // ─── TYPEWRITER ───
+  function stopTypeWriter() {
+    if (typeWriterInterval) { clearInterval(typeWriterInterval); typeWriterInterval = null; }
+  }
+
+  function typeWriter(text, onUpdate, onEnd) {
+    stopTypeWriter();
+    if (!text) { if (onEnd) onEnd(); return; }
+    let i = 0;
+    typeWriterInterval = setInterval(() => {
+      if (i < text.length) {
+        if (onUpdate) onUpdate(text.substring(0, i + 1));
+        i++;
+      } else {
+        stopTypeWriter();
+        if (onEnd) onEnd();
+      }
+    }, 30);
+  }
+
+  // ─── RENDER FRAME ───
   function renderFrame(frameData, idx, total) {
     const hasVideo = !!frameData.videoSrc;
     const videoContent = hasVideo
@@ -62,319 +432,120 @@ const App = (function() {
         <div class="video-layer">
           ${videoContent}
         </div>
-
-        <button class="audio-btn" data-audio="${escapeHtml(frameData.audioSrc || '')}" title="Озвучка рассказчика">
-          <span class="audio-icon">🔊</span>
-          <div class="audio-wave"><span></span><span></span><span></span><span></span></div>
-        </button>
-        ${(frameData.dialogueAudio?.length > 0) ? `
-        <button class="dialogue-audio-btn" title="Озвучить диалог">
-          <span>🗣️</span>
-          <span>Озвучить диалог</span>
-        </button>` : ''}
-
-        <div class="narrator-bar">
-          <span class="narrator-content"></span><span class="narrator-cursor">|</span>
-        </div>
-        <button class="narrator-toggle" title="Свернуть">
-          <span class="nt-icon">−</span>
-          <span class="nt-label">Субтитры</span>
-        </button>
-
-        <div class="swipe-hint">👆 Листай вверх</div>
-
-        <div class="frame-nav-bar">
-          <div class="nav-counter">Кадр ${idx + 1} из ${total}</div>
-          <div class="game-dock">
-            ${(frameData.availableGames || []).map(g => `
-              <button class="game-chip" data-game="${g}" title="${GAME_NAMES[g] || g}">
-                <span class="game-chip-icon">${GAME_ICONS[g] || '🎮'}</span>
-              </button>
-            `).join('')}
-          </div>
-        </div>
-
-        ${idx < total - 1 ? `
-        <div class="transition-popup" style="display:none">
-          <div class="transition-popup-text"></div>
-          <button class="transition-popup-btn">Далее →</button>
-        </div>
-        ` : ''}
       </div>
     `;
   }
 
-  const SPEAKER_NAMES = {
-    hrust: "Мудрый Хрусталик",
-    sovet: "Советник",
-    dev: "Девочка",
-    tolpa: "Толпа",
-    nar: "Рассказчик"
-  };
-
-  const GAME_NAMES = { blink: 'Моргай-зарядка', tracker: 'Трекер-взгляд' };
-  const GAME_ICONS = { blink: '⚡', tracker: '👀' };
-
-  function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  // ═══════════════════════════════════════════════════════════
-  // TYPEWRITER
-  // ═══════════════════════════════════════════════════════════
-  function stopTypeWriter() {
-    if (typeWriterInterval) {
-      clearInterval(typeWriterInterval);
-      typeWriterInterval = null;
+  // ─── PROGRESS DOTS ───
+  function updateProgressDots(current, total) {
+    const container = document.getElementById('progressDots');
+    if (!container) return;
+    container.innerHTML = '';
+    for (let i = 0; i < total; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'progress-dot' + (i === current ? ' active' : i < current ? ' seen' : '');
+      container.appendChild(dot);
     }
   }
 
-  function clearDialogueTimeouts() {
-    dialogueTimeouts.forEach(id => clearTimeout(id));
-    dialogueTimeouts = [];
+  // ─── FRAME END CHECK ───
+  function resetEndFlags() {
+    audioEndedForFrame = false;
+    typewriterEndedForFrame = false;
   }
 
-  function typeWriter(text, element) {
-    stopTypeWriter();
-    if (!element) return;
-    element.textContent = '';
-    const speed = 30; // ms per character
-    let i = 0;
-    typeWriterInterval = setInterval(() => {
-      if (i < text.length) {
-        element.textContent += text.charAt(i);
-        i++;
-        // Auto-scroll to bottom
-        const bar = element.closest('.narrator-bar');
-        if (bar) bar.scrollTop = bar.scrollHeight;
-      } else {
-        stopTypeWriter();
-      }
-    }, speed);
-  }
-
-  // ═══════════════════════════════════════════════════════════
-  // AUDIO
-  // ═══════════════════════════════════════════════════════════
-  function playAudioSequence(sources, onEnd) {
-    stopAudio();
-    const btn = document.querySelector('.frame.active .audio-btn');
-    const queue = sources.filter(Boolean);
-
-    function playNext() {
-      if (queue.length === 0) {
-        cleanupAudio(btn, onEnd);
-        return;
-      }
-      const src = queue.shift();
-      const audio = new Audio(src);
-      audio.preload = 'auto';
-      currentAudioEl = audio;
-
-      if (btn) btn.classList.add('playing');
-      isPlayingAudio = true;
-
-      audio.onended = () => {
-        if (audioTimeout) { clearTimeout(audioTimeout); audioTimeout = null; }
-        playNext();
-      };
-
-      audio.onerror = () => {
-        console.warn('Audio failed:', src);
-        if (audioTimeout) { clearTimeout(audioTimeout); audioTimeout = null; }
-        playNext();
-      };
-
-      audio.play().catch(err => {
-        console.warn('Audio play failed:', src, err);
-        if (audioTimeout) { clearTimeout(audioTimeout); audioTimeout = null; }
-        playNext();
-      });
-
-      audioTimeout = setTimeout(() => {
-        if (isPlayingAudio) {
-          console.warn('Audio timeout, skipping:', src);
-          playNext();
-        }
-      }, 30000);
+  function checkFrameEnd() {
+    if (audioEndedForFrame && typewriterEndedForFrame) {
+      const frameData = frames[currentFrameIdx];
+      BottomSheet.showNextButton(frameData?.transitionText || 'Далее');
     }
-
-    if (queue.length === 0) {
-      cleanupAudio(btn, onEnd);
-      return;
-    }
-    playNext();
   }
 
-  function stopAudio() {
-    if (currentAudioEl) {
-      currentAudioEl.pause();
-      currentAudioEl = null;
-    }
-    if (audioTimeout) {
-      clearTimeout(audioTimeout);
-      audioTimeout = null;
-    }
-    const btn = document.querySelector('.frame.active .audio-btn');
-    cleanupAudio(btn, null);
+  function onAudioEnd() {
+    audioEndedForFrame = true;
+    checkFrameEnd();
   }
 
-  function cleanupAudio(btn, onEnd) {
-    if (btn) btn.classList.remove('playing');
-    isPlayingAudio = false;
-    if (audioTimeout) {
-      clearTimeout(audioTimeout);
-      audioTimeout = null;
-    }
-    if (typeof onEnd === 'function') onEnd();
+  function onTypewriterEnd() {
+    typewriterEndedForFrame = true;
+    checkFrameEnd();
   }
 
-  function showTransitionPopup(idx) {
-    const frame = document.querySelectorAll('.frame')[idx];
-    if (!frame) return;
-    const popup = frame.querySelector('.transition-popup');
-    if (!popup) return;
-    const textEl = popup.querySelector('.transition-popup-text');
-    const frameData = frames[idx];
-    if (textEl && frameData && frameData.transitionText) {
-      textEl.textContent = frameData.transitionText;
-    }
-    popup.style.display = 'flex';
-    void popup.offsetWidth;
-    popup.classList.add('visible');
-  }
-
-  function hideTransitionPopup(idx) {
-    const frame = document.querySelectorAll('.frame')[idx];
-    if (!frame) return;
-    const popup = frame.querySelector('.transition-popup');
-    if (!popup) return;
-    popup.classList.remove('visible');
-    setTimeout(() => {
-      if (!popup.classList.contains('visible')) {
-        popup.style.display = 'none';
-      }
-    }, 400);
-  }
-
-  function hideAllTransitionPopups() {
-    document.querySelectorAll('.transition-popup.visible').forEach(p => {
-      p.classList.remove('visible');
-      setTimeout(() => {
-        if (!p.classList.contains('visible')) p.style.display = 'none';
-      }, 400);
-    });
-  }
-
-  // ═══════════════════════════════════════════════════════════
-  // FRAME NAVIGATION
-  // ═══════════════════════════════════════════════════════════
+  // ─── SHOW FRAME ───
   function showFrame(idx, direction) {
     const allFrames = document.querySelectorAll('.frame');
-    stopAudio();
+    AudioController.stop();
     stopTypeWriter();
     clearDialogueTimeouts();
-    hideAllTransitionPopups();
+    resetEndFlags();
+    BottomSheet.hideNextButton();
 
-    // Disable transitions for instant init (direction === null)
-    if (!direction) {
-      allFrames.forEach(f => f.style.transition = 'none');
-    }
+    if (!direction) allFrames.forEach(f => f.style.transition = 'none');
 
     allFrames.forEach((f, i) => {
-      // Pause video on frames leaving the viewport
       if (i !== idx) {
         const v = f.querySelector('video');
         if (v) { v.pause(); v.currentTime = 0; }
       }
       f.classList.remove('active', 'above', 'below');
-      if (i === idx) {
-        f.classList.add('active');
-      } else if (i < idx) {
-        f.classList.add('above');
-      } else {
-        f.classList.add('below');
-      }
+      if (i === idx) f.classList.add('active');
+      else if (i < idx) f.classList.add('above');
+      else f.classList.add('below');
     });
 
-    // Re-enable transitions after init
     if (!direction) {
-      requestAnimationFrame(() => {
-        allFrames.forEach(f => f.style.transition = '');
-      });
+      requestAnimationFrame(() => allFrames.forEach(f => f.style.transition = ''));
     }
 
     currentFrameIdx = idx;
+    const frameData = frames[idx];
 
-    const total = frames.length;
-    if (progressFill) progressFill.style.width = ((idx + 1) / total * 100) + '%';
-    if (frameCounter) frameCounter.textContent = `Кадр ${idx + 1} из ${total}`;
+    updateProgressDots(idx, frames.length);
+    BottomSheet.setSubtitle('');
+    BottomSheet.setNarratorFull(frameData?.narration || '');
+    BottomSheet.renderGameDock(frameData?.availableGames || []);
+    BottomSheet.renderGamePanel(frameData?.availableGames || []);
 
     const frame = allFrames[idx];
-    if (!frame) return;
-
-    // Reset video preview state for this frame
-    const preview = frame.querySelector('.frame-preview');
-    const previewInfo = frame.querySelector('.frame-preview-info');
-    const playBtn = frame.querySelector('.video-play-btn');
-    const video = frame.querySelector('video');
-    if (preview) preview.classList.remove('hidden');
-    if (previewInfo) previewInfo.classList.remove('hidden');
-    if (playBtn) playBtn.style.display = 'flex';
-    if (video) { video.classList.remove('visible'); video.pause(); video.currentTime = 0; }
-
-    // Reset narrator bar collapse state
-    const narratorBar = frame.querySelector('.narrator-bar');
-    const narratorToggle = frame.querySelector('.narrator-toggle');
-    if (narratorBar) { narratorBar.classList.remove('collapsed'); }
-    if (narratorToggle) {
-      const ntIcon = narratorToggle.querySelector('.nt-icon');
-      if (ntIcon) ntIcon.textContent = '−';
-      narratorToggle.title = 'Свернуть';
+    if (frame) {
+      const preview = frame.querySelector('.frame-preview');
+      const previewInfo = frame.querySelector('.frame-preview-info');
+      const playBtn = frame.querySelector('.video-play-btn');
+      const video = frame.querySelector('video');
+      if (preview) preview.classList.remove('hidden');
+      if (previewInfo) previewInfo.classList.remove('hidden');
+      if (playBtn) playBtn.style.display = 'flex';
+      if (video) {
+        video.classList.remove('visible');
+        video.pause();
+        video.currentTime = 0;
+        video.volume = AudioController.volume;
+      }
     }
 
-    // Reset swipe hint
-    const swipeHint = frame.querySelector('.swipe-hint');
-    if (swipeHint) {
-      swipeHint.classList.remove('hidden');
-      if (swipeHintTimeout) clearTimeout(swipeHintTimeout);
-      swipeHintTimeout = setTimeout(() => {
-        if (swipeHint) swipeHint.classList.add('hidden');
-      }, 3000);
-    }
+    AudioController.setFrameData(frameData);
+    AudioController.play();
 
-    // Auto-play audio narration + dialogue sequence
-    const audioSrc = frame.querySelector('.audio-btn')?.dataset.audio;
-    const dialogueAudios = frames[idx]?.dialogueAudio || [];
-    const allAudio = [];
-    if (audioSrc) allAudio.push(audioSrc);
-    if (dialogueAudios.length) allAudio.push(...dialogueAudios);
-    console.log('Frame', idx, 'audio queue:', allAudio);
-
-    if (allAudio.length > 0) {
-      playAudioSequence(allAudio, () => showTransitionPopup(idx));
+    const narrationText = frameData?.narration || '';
+    if (narrationText) {
+      typeWriter(narrationText,
+        (text) => BottomSheet.setSubtitle(text),
+        () => { onTypewriterEnd(); }
+      );
     } else {
-      setTimeout(() => showTransitionPopup(idx), 2500);
+      typewriterEndedForFrame = true;
     }
 
-    // Update profile badge in viewer
     if (typeof PlayerProfile !== 'undefined' && PlayerProfile.renderBadge) {
       PlayerProfile.renderBadge();
     }
 
-    // Start typewriter narration
-    const narratorContent = frame.querySelector('.narrator-content');
-    const narrationText = frames[idx]?.narration || '';
-    if (narratorContent && narrationText) {
-      typeWriter(narrationText, narratorContent);
-    }
-  }
-
-  function resetFrameState() {
-    // No phase states to reset — video and audio start automatically
+    // Reset UI hide timer
+    clearTimeout(uiHideTimeout);
+    episodeViewer.classList.remove('ui-hidden');
+    uiHideTimeout = setTimeout(() => {
+      if (BottomSheet.state === 'collapsed') episodeViewer.classList.add('ui-hidden');
+    }, 3000);
   }
 
   function animateTo(idx, direction) {
@@ -408,23 +579,12 @@ const App = (function() {
   }
 
   function prevFrame() {
-    if (currentFrameIdx > 0) {
-      animateTo(currentFrameIdx - 1, 'prev');
-    }
+    if (currentFrameIdx > 0) animateTo(currentFrameIdx - 1, 'prev');
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // PHASE TRANSITIONS
-  // ═══════════════════════════════════════════════════════════
-  function startVideoPhase() {
-    // Deprecated — video now starts automatically with the frame
-  }
-
-  // ═══════════════════════════════════════════════════════════
-  // GAME INTEGRATION
-  // ═══════════════════════════════════════════════════════════
+  // ─── GAME INTEGRATION ───
   function startGame(gameType) {
-    stopAudio();
+    AudioController.stop();
     if (gameType === 'runner') {
       showGameTransition('🏃 Мини-игра!', 'Помоги Суперглазке догнать Пикселька!', () => {
         if (typeof startRunnerGame === 'function') startRunnerGame();
@@ -447,80 +607,59 @@ const App = (function() {
   function showGameTransition(title, subtitle, onStart) {
     const overlay = document.getElementById('game-transition-overlay');
     if (!overlay) { if (onStart) onStart(); return; }
-
     const tTitle = overlay.querySelector('.gt-title');
     const tSub = overlay.querySelector('.gt-sub');
     if (tTitle) tTitle.textContent = title;
     if (tSub) tSub.textContent = subtitle;
-
     overlay.classList.add('visible');
-
     const btn = overlay.querySelector('.gt-btn');
     if (btn) {
       const newBtn = btn.cloneNode(true);
       btn.parentNode.replaceChild(newBtn, btn);
-      const start = () => {
-        overlay.classList.remove('visible');
-        if (onStart) setTimeout(onStart, 300);
-      };
+      const start = () => { overlay.classList.remove('visible'); if (onStart) setTimeout(onStart, 300); };
       newBtn.addEventListener('click', start);
       newBtn.addEventListener('touchstart', (e) => { e.preventDefault(); start(); }, {passive: false});
     }
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // TRANSITIONS & END SCREEN
-  // ═══════════════════════════════════════════════════════════
+  // ─── TRANSITIONS & END ───
   function showTransition(onComplete) {
-    if (!transitionOverlay) {
-      if (onComplete) onComplete();
-      return;
-    }
-    transitionOverlay.classList.add('visible');
+    const overlay = document.getElementById('transition-overlay');
+    if (!overlay) { if (onComplete) onComplete(); return; }
+    overlay.classList.add('visible');
     setTimeout(() => {
-      transitionOverlay.classList.remove('visible');
+      overlay.classList.remove('visible');
       if (onComplete) onComplete();
     }, 800);
   }
 
   function showEndScreen() {
-    const text = transitionOverlay ? transitionOverlay.querySelector('.transition-text') : null;
+    const text = document.querySelector('#transition-overlay .transition-text');
     if (text) text.textContent = 'Эпизод завершён! Скоро продолжение...';
-    if (transitionOverlay) transitionOverlay.classList.add('visible');
+    const overlay = document.getElementById('transition-overlay');
+    if (overlay) overlay.classList.add('visible');
     setTimeout(() => {
-      if (transitionOverlay) transitionOverlay.classList.remove('visible');
+      if (overlay) overlay.classList.remove('visible');
       backToMenu();
     }, 3000);
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // MENU
-  // ═══════════════════════════════════════════════════════════
+  // ─── MENU ───
   function startEpisode(episodeId) {
     const epData = EPISODES[episodeId];
     if (!epData) return;
-
     currentEpisode = epData;
     frames = epData.frames;
-
-    // Render frames into container
-    if (frameContainer) {
-      frameContainer.innerHTML = frames.map((f, i) => renderFrame(f, i, frames.length)).join('');
-    }
-
+    if (frameContainer) frameContainer.innerHTML = frames.map((f, i) => renderFrame(f, i, frames.length)).join('');
     if (mainMenu) mainMenu.classList.add('hidden');
     if (episodeViewer) episodeViewer.classList.add('active');
-
-    // Update profile badge
     if (typeof PlayerProfile !== 'undefined') PlayerProfile.renderBadge();
-
-    // Bind events on newly rendered elements
     bindFrameEvents();
     showFrame(0, null);
   }
 
   function backToMenu() {
-    stopAudio();
+    AudioController.stop();
     if (episodeViewer) episodeViewer.classList.remove('active');
     if (mainMenu) mainMenu.classList.remove('hidden');
     if (frameContainer) frameContainer.innerHTML = '';
@@ -529,44 +668,13 @@ const App = (function() {
     currentFrameIdx = 0;
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // EVENT BINDING
-  // ═══════════════════════════════════════════════════════════
+  // ─── EVENT BINDING ───
   function bindFrameEvents() {
-    // Audio toggle
-    document.querySelectorAll('.audio-btn').forEach(btn => {
-      const toggle = () => {
-        if (isPlayingAudio) {
-          stopAudio();
-        } else {
-          const frameData = frames[currentFrameIdx];
-          const allAudio = [];
-          if (frameData?.audioSrc) allAudio.push(frameData.audioSrc);
-          if (frameData?.dialogueAudio?.length) allAudio.push(...frameData.dialogueAudio);
-          if (allAudio.length) playAudioSequence(allAudio, null);
-        }
-      };
-      btn.addEventListener('click', toggle);
-      btn.addEventListener('touchstart', (e) => { e.preventDefault(); toggle(); }, {passive: false});
-    });
-
-    // Dialogue audio button
-    document.querySelectorAll('.dialogue-audio-btn').forEach(btn => {
-      const playDialogues = () => {
-        stopAudio();
-        const frameData = frames[currentFrameIdx];
-        if (frameData?.dialogueAudio?.length) {
-          playAudioSequence(frameData.dialogueAudio, null);
-        }
-      };
-      btn.addEventListener('click', playDialogues);
-      btn.addEventListener('touchstart', (e) => { e.preventDefault(); playDialogues(); }, {passive: false});
-    });
-
-    // Video play button
-    document.querySelectorAll('.video-play-btn').forEach(btn => {
-      const playVideo = () => {
-        const layer = btn.closest('.video-layer');
+    // Video play & toggle (delegated)
+    frameContainer.addEventListener('click', (e) => {
+      const playBtn = e.target.closest('.video-play-btn');
+      if (playBtn) {
+        const layer = playBtn.closest('.video-layer');
         const preview = layer?.querySelector('.frame-preview');
         const previewInfo = layer?.querySelector('.frame-preview-info');
         const video = layer?.querySelector('video');
@@ -576,160 +684,99 @@ const App = (function() {
           video.classList.add('visible');
           video.muted = false;
           video.play().catch(() => {});
+          AudioController.playVideo(video);
         }
-        btn.style.display = 'none';
-      };
-      btn.addEventListener('click', playVideo);
-      btn.addEventListener('touchstart', (e) => { e.preventDefault(); playVideo(); }, {passive: false});
+        playBtn.style.display = 'none';
+        return;
+      }
+      const video = e.target.closest('.video-layer video');
+      if (video) {
+        if (video.paused) video.play().catch(() => {});
+        else video.pause();
+        return;
+      }
     });
 
-    // Video pause/play toggle on video itself
-    document.querySelectorAll('.video-layer video').forEach(video => {
-      video.addEventListener('click', () => {
-        if (video.paused) {
-          video.play().catch(() => {});
-        } else {
-          video.pause();
-        }
-      });
-      video.addEventListener('ended', () => {
-        const layer = video.closest('.video-layer');
+    // Video ended (capture phase for reliable detection)
+    frameContainer.addEventListener('ended', (e) => {
+      if (e.target.tagName === 'VIDEO') {
+        const layer = e.target.closest('.video-layer');
         const preview = layer?.querySelector('.frame-preview');
         const previewInfo = layer?.querySelector('.frame-preview-info');
         const playBtn = layer?.querySelector('.video-play-btn');
-        video.classList.remove('visible');
+        e.target.classList.remove('visible');
         if (preview) preview.classList.remove('hidden');
         if (previewInfo) previewInfo.classList.remove('hidden');
         if (playBtn) playBtn.style.display = 'flex';
-      });
-    });
-
-    // Narrator bar toggle
-    document.querySelectorAll('.narrator-toggle').forEach(btn => {
-      const toggle = () => {
-        const bar = btn.previousElementSibling;
-        if (!bar || !bar.classList.contains('narrator-bar')) return;
-        bar.classList.toggle('collapsed');
-        const isCollapsed = bar.classList.contains('collapsed');
-        const ntIcon = btn.querySelector('.nt-icon');
-        if (ntIcon) ntIcon.textContent = isCollapsed ? '+' : '−';
-        btn.title = isCollapsed ? 'Развернуть' : 'Свернуть';
-      };
-      btn.addEventListener('click', toggle);
-      btn.addEventListener('touchstart', (e) => { e.preventDefault(); toggle(); }, {passive: false});
-    });
-
-    // Transition popup buttons
-    document.querySelectorAll('.transition-popup-btn').forEach(btn => {
-      const go = () => { hideTransitionPopup(currentFrameIdx); nextFrame(); };
-      btn.addEventListener('click', go);
-      btn.addEventListener('touchstart', (e) => { e.preventDefault(); go(); }, {passive: false});
-    });
-
-    // Game chips (replayable mini-games)
-    document.querySelectorAll('.game-chip').forEach(btn => {
-      const launch = () => {
-        gameAdvancePending = false;
-        const gameType = btn.dataset.game;
-        if (gameType) startGame(gameType);
-      };
-      btn.addEventListener('click', launch);
-      btn.addEventListener('touchstart', (e) => { e.preventDefault(); launch(); }, {passive: false});
-    });
+        AudioController.onVideoEnded();
+      }
+    }, true);
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // INIT
-  // ═══════════════════════════════════════════════════════════
-  function createSparkles(x, y) {
-    const colors = ['#fbbf24', '#f59e0b', '#fff', '#a855f7', '#06b6d4'];
-    const count = 6 + Math.floor(Math.random() * 5);
-    for (let i = 0; i < count; i++) {
-      const el = document.createElement('div');
-      const isStar = Math.random() > 0.5;
-      el.className = isStar ? 'sparkle star' : 'sparkle';
-      if (isStar) el.textContent = '✨';
-      else el.style.background = `radial-gradient(circle, ${colors[Math.floor(Math.random() * colors.length)]} 0%, transparent 70%)`;
-      const angle = Math.random() * Math.PI * 2;
-      const dist = 20 + Math.random() * 50;
-      el.style.setProperty('--sx', Math.cos(angle) * dist + 'px');
-      el.style.setProperty('--sy', Math.sin(angle) * dist + 'px');
-      el.style.left = x + 'px';
-      el.style.top = y + 'px';
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 800);
-    }
-  }
-
+  // ─── SWIPE ───
   function initSwipe() {
-    const container = frameContainer || document.getElementById('frame-container');
-    if (!container) return;
-
+    if (!frameContainer) return;
     let startY = 0, startX = 0, isDragging = false;
     const SWIPE_THRESHOLD = 80;
 
-    function onStart(y, x) {
-      startY = y;
-      startX = x;
-      isDragging = true;
-    }
-    function onMove(y, x) {
-      if (!isDragging) return;
-      // Optional real-time drag feedback could go here
-    }
+    function onStart(y, x) { startY = y; startX = x; isDragging = true; }
     function onEnd(y, x) {
       if (!isDragging) return;
       isDragging = false;
       const deltaY = y - startY;
       const deltaX = x - startX;
-      // Ignore horizontal swipes
       if (Math.abs(deltaX) > Math.abs(deltaY)) return;
       if (deltaY < -SWIPE_THRESHOLD) nextFrame();
       else if (deltaY > SWIPE_THRESHOLD) prevFrame();
     }
 
-    container.addEventListener('touchstart', e => {
-      // Ignore if touch starts inside interactive elements
-      if (e.target.closest('.narrator-bar, .transition-popup, .video-play-btn, .audio-btn, .dialogue-audio-btn, .nav-btn, .game-chip, .narrator-toggle')) return;
-      createSparkles(e.touches[0].clientX, e.touches[0].clientY);
+    frameContainer.addEventListener('touchstart', e => {
+      if (e.target.closest('.video-play-btn, .video-layer video')) return;
       onStart(e.touches[0].clientY, e.touches[0].clientX);
     }, {passive: true});
-    container.addEventListener('touchmove', e => {
-      if (!isDragging) return;
-      onMove(e.touches[0].clientY, e.touches[0].clientX);
-    }, {passive: true});
-    container.addEventListener('touchend', e => {
+    frameContainer.addEventListener('touchend', e => {
       if (!isDragging) return;
       onEnd(e.changedTouches[0].clientY, e.changedTouches[0].clientX);
     }, {passive: true});
 
-    // Mouse support for desktop
-    container.addEventListener('mousedown', e => {
-      if (e.target.closest('.narrator-bar, .transition-popup, .video-play-btn, .audio-btn, .dialogue-audio-btn, .nav-btn, .game-chip, .narrator-toggle')) return;
-      createSparkles(e.clientX, e.clientY);
+    frameContainer.addEventListener('mousedown', e => {
+      if (e.target.closest('.video-play-btn, .video-layer video')) return;
       onStart(e.clientY, e.clientX);
     });
-    container.addEventListener('mousemove', e => {
-      if (!isDragging) return;
-      onMove(e.clientY, e.clientX);
-    });
-    container.addEventListener('mouseup', e => {
+    frameContainer.addEventListener('mouseup', e => {
       if (!isDragging) return;
       onEnd(e.clientY, e.clientX);
     });
-    container.addEventListener('mouseleave', () => { isDragging = false; });
+    frameContainer.addEventListener('mouseleave', () => { isDragging = false; });
   }
 
+  // ─── UI HIDE ───
+  function initUIHide() {
+    if (!episodeViewer) return;
+    episodeViewer.addEventListener('click', (e) => {
+      // Ignore clicks on interactive elements
+      if (e.target.closest('.frame-top-bar, .bottom-sheet, .video-play-btn, .video-layer video, .bs-controls, .bs-expanded')) return;
+      episodeViewer.classList.toggle('ui-hidden');
+      if (!episodeViewer.classList.contains('ui-hidden')) {
+        clearTimeout(uiHideTimeout);
+        uiHideTimeout = setTimeout(() => {
+          if (BottomSheet.state === 'collapsed') episodeViewer.classList.add('ui-hidden');
+        }, 3000);
+      }
+    });
+  }
+
+  // ─── INIT ───
   function init() {
     initSwipe();
+    initUIHide();
+    BottomSheet.init();
 
-    // Splash screen
     if (startBtn && splash) {
       startBtn.addEventListener('click', () => {
-        // Initialize audio context on user gesture
         try {
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          if (AudioContext) { const ac = new AudioContext(); if (ac.state === 'suspended') ac.resume(); }
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (AC) { const ac = new AC(); if (ac.state === 'suspended') ac.resume(); }
         } catch(e) {}
         splash.classList.add('hide');
         setTimeout(() => { splash.style.display = 'none'; }, 600);
@@ -738,7 +785,6 @@ const App = (function() {
       startBtn.addEventListener('touchend', (e) => { e.preventDefault(); startBtn.click(); }, {passive: false});
     }
 
-    // Chapter cards
     document.querySelectorAll('.chapter-card').forEach(card => {
       card.addEventListener('click', () => {
         if (card.classList.contains('locked')) return;
@@ -747,21 +793,16 @@ const App = (function() {
       });
     });
 
-    // Back button
-    document.querySelectorAll('.back-btn').forEach(btn => {
+    document.querySelectorAll('#viewerBackBtn, .back-btn').forEach(btn => {
       btn.addEventListener('click', () => backToMenu());
     });
 
-    // Keyboard nav
     document.addEventListener('keydown', (e) => {
       if (!episodeViewer || !episodeViewer.classList.contains('active')) return;
       if (e.key === 'ArrowRight' || e.key === ' ') {
         const frameData = frames[currentFrameIdx];
-        if (frameData && frameData.game) {
-          startGame(frameData.game);
-        } else {
-          nextFrame();
-        }
+        if (frameData && frameData.game) startGame(frameData.game);
+        else nextFrame();
       }
       if (e.key === 'ArrowLeft') prevFrame();
       if (e.key === 'Escape') backToMenu();
@@ -774,21 +815,16 @@ const App = (function() {
     init();
   }
 
-  return { startEpisode, backToMenu, nextFrame, prevFrame, advanceFromGame };
+  return { startEpisode, backToMenu, nextFrame, prevFrame, advanceFromGame, startGame, onAudioEnd };
 })();
 
 /* ═══════════════════════════════════════════════════════════
    LEGACY GAME COMPATIBILITY SHIMS
    ═══════════════════════════════════════════════════════════ */
 
-// Called by game_runner.js when game ends or is skipped
 window.closeRunner = function(skip) {
   document.getElementById('game-overlay-runner').classList.remove('visible');
-  if (skip) {
-    setTimeout(() => {
-      if (typeof App !== 'undefined') App.advanceFromGame();
-    }, 300);
-  }
+  if (skip) setTimeout(() => { if (typeof App !== 'undefined') App.advanceFromGame(); }, 300);
 };
 
 window.showRunnerRegistration = function() {
@@ -806,14 +842,9 @@ window.finishRunnerRegistration = function() {
   if (typeof App !== 'undefined') App.advanceFromGame();
 };
 
-// Called by game_gymnastics.js when game ends or is skipped
 window.closeGym = function(skip) {
   document.getElementById('game-overlay-gym').classList.remove('visible');
-  if (skip) {
-    setTimeout(() => {
-      if (typeof App !== 'undefined') App.advanceFromGame();
-    }, 300);
-  }
+  if (skip) setTimeout(() => { if (typeof App !== 'undefined') App.advanceFromGame(); }, 300);
 };
 
 window.showRegistration = function() {
@@ -831,15 +862,11 @@ window.finishRegistration = function() {
   if (typeof App !== 'undefined') App.advanceFromGame();
 };
 
-// Called by both games on victory
 window.closeWinContinue = function() {
   document.getElementById('win-overlay').classList.remove('visible');
-  setTimeout(() => {
-    if (typeof App !== 'undefined') App.advanceFromGame();
-  }, 300);
+  setTimeout(() => { if (typeof App !== 'undefined') App.advanceFromGame(); }, 300);
 };
 
-// Hide overlay helper used by old comic.js
 window.hideOverlay = function(id) {
   const el = typeof id === 'string' ? document.getElementById(id) : id;
   if (el) el.classList.remove('visible');
