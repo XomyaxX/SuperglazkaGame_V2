@@ -32,12 +32,21 @@ const AudioController = {
   volume: 0.8,
   timeoutId: null,
   frameData: null,
+  stateChangeCallback: null,
 
   setFrameData(frameData) {
     this.frameData = frameData;
     this.stop();
     this.currentIdx = 0;
     this.buildQueue();
+  },
+
+  onStateChange(fn) {
+    this.stateChangeCallback = fn;
+  },
+
+  _notifyStateChange() {
+    if (this.stateChangeCallback) this.stateChangeCallback(this.state);
   },
 
   buildQueue() {
@@ -64,8 +73,8 @@ const AudioController = {
   },
 
   playNext() {
+    this.stopCurrent();
     if (this.currentIdx >= this.queue.length) {
-      this.stopCurrent();
       this.state = 'idle';
       this.onQueueEnd();
       return;
@@ -125,6 +134,7 @@ const AudioController = {
     if (this.currentAudio && this.state === 'playing') {
       this.currentAudio.pause();
       this.state = 'paused';
+      this._notifyStateChange();
       this.updateUI();
     }
   },
@@ -143,6 +153,7 @@ const AudioController = {
     this.stopCurrent();
     this.state = 'idle';
     this.currentIdx = 0;
+    this._notifyStateChange();
     this.updateUI();
   },
 
@@ -174,6 +185,7 @@ const AudioController = {
         this.play();
       }
     }
+    this._notifyStateChange();
     this.updateUI();
   },
 
@@ -184,6 +196,7 @@ const AudioController = {
     this.activeTracks.narration = false;
     this.activeTracks.dialogue = false;
     videoEl.muted = false;
+    this._notifyStateChange();
     this.updateUI();
   },
 
@@ -255,15 +268,18 @@ const SubtitleOverlay = {
     if (!this.el || !this.lineEl) return;
     if (this._last === text) return;
     this._last = text;
+    if (this._pendingTimeout) { clearTimeout(this._pendingTimeout); this._pendingTimeout = null; }
     this.el.classList.add('switching');
-    setTimeout(() => {
+    this._pendingTimeout = setTimeout(() => {
       this.lineEl.textContent = text;
       this.el.classList.remove('switching');
+      this._pendingTimeout = null;
     }, 300);
   },
 
   clear() {
     this._last = null;
+    if (this._pendingTimeout) { clearTimeout(this._pendingTimeout); this._pendingTimeout = null; }
     if (this.lineEl) this.lineEl.textContent = '';
     if (this.el) this.el.classList.remove('switching');
   }
@@ -285,7 +301,6 @@ const BottomSheet = {
     this.narratorFull = document.getElementById('bsNarratorFull');
     this.gameDock = document.getElementById('bsGameDock');
     this.gamePanelInner = document.getElementById('bsGamePanelInner');
-    this.nextBtn = document.getElementById('bsNextBtn');
     this.navNextBtn = document.getElementById('bsNavNextBtn');
     this.prevBtn = document.getElementById('bsPrevBtn');
 
@@ -318,7 +333,6 @@ const BottomSheet = {
     const volSlider = document.getElementById('bsVolumeSlider');
     if (volSlider) volSlider.addEventListener('input', (e) => AudioController.setVolume(e.target.value));
 
-    if (this.nextBtn) this.nextBtn.addEventListener('click', () => App.nextFrame());
     if (this.navNextBtn) this.navNextBtn.addEventListener('click', () => App.nextFrame());
     if (this.prevBtn) this.prevBtn.addEventListener('click', () => App.prevFrame());
 
@@ -335,6 +349,7 @@ const BottomSheet = {
       collapsed: Math.max(0, fullH - collapsedH),
       hidden: Math.max(0, fullH - handleH)
     };
+    this.applyTranslateY(this.snapPoints[this.state], true);
   },
 
   getTranslateY() {
@@ -398,18 +413,10 @@ const BottomSheet = {
   },
 
   showNextButton(text) {
-    if (this.nextBtn) {
-      this.nextBtn.classList.add('active');
-      if (text) this.nextBtn.textContent = text + ' →';
-    }
     if (this.navNextBtn) this.navNextBtn.classList.add('active');
   },
 
   hideNextButton() {
-    if (this.nextBtn) {
-      this.nextBtn.classList.remove('active');
-      this.nextBtn.textContent = 'Далее →';
-    }
     if (this.navNextBtn) this.navNextBtn.classList.remove('active');
   },
 
@@ -732,7 +739,7 @@ const App = (function() {
 
     const narrationText = frameData?.narration || '';
     if (narrationText) {
-      const lines = splitLines(narrationText, 42);
+      const lines = splitLines(narrationText, 70);
       const lineCount = lines.length;
       let currentLineIdx = -1;
 
@@ -790,8 +797,16 @@ const App = (function() {
         if (narrationAudio.readyState >= 1) {
           startSync();
         } else {
-          const onMeta = () => { startSync(); narrationAudio.removeEventListener('loadedmetadata', onMeta); };
-          const onErr = () => { fallbackTypewriter(); narrationAudio.removeEventListener('error', onErr); };
+          const onMeta = () => {
+            narrationAudio.removeEventListener('loadedmetadata', onMeta);
+            narrationAudio.removeEventListener('error', onErr);
+            startSync();
+          };
+          const onErr = () => {
+            narrationAudio.removeEventListener('loadedmetadata', onMeta);
+            narrationAudio.removeEventListener('error', onErr);
+            fallbackTypewriter();
+          };
           narrationAudio.addEventListener('loadedmetadata', onMeta);
           narrationAudio.addEventListener('error', onErr);
           subtitleSyncCleanup = () => {
@@ -1023,6 +1038,17 @@ const App = (function() {
   function init() {
     initSwipe();
     BottomSheet.init();
+
+    const subOverlay = document.getElementById('subtitleOverlay');
+    if (subOverlay) {
+      subOverlay.addEventListener('click', (e) => e.stopPropagation());
+      subOverlay.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+    }
+
+    AudioController.onStateChange(() => {
+      if (subtitleSyncCleanup) { subtitleSyncCleanup(); subtitleSyncCleanup = null; }
+      SubtitleOverlay.clear();
+    });
 
     const cinemaToggleBtn = document.getElementById('cinemaToggleBtn');
     if (cinemaToggleBtn) {

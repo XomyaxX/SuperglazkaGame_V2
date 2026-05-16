@@ -1696,7 +1696,7 @@ body {
   z-index: 20;
   max-width: 90%;
   text-align: center;
-  pointer-events: none;
+  pointer-events: auto;
   padding: 8px 16px;
   border-radius: 12px;
   background: rgba(0,0,0,0.35);
