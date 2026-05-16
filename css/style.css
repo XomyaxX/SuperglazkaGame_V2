@@ -2089,3 +2089,13 @@ body {
   top: auto;
   right: auto;
 }
+
+/* Fix: allow swipe to pass through top-bar and bottom-sheet */
+.frame-top-bar,
+.bottom-sheet {
+  pointer-events: none;
+}
+.frame-top-bar *,
+.bottom-sheet * {
+  pointer-events: auto;
+}

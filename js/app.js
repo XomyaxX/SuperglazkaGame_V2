@@ -697,20 +697,20 @@ const App = (function() {
       }
     });
 
-    // Video ended (capture phase for reliable detection)
-    frameContainer.addEventListener('ended', (e) => {
-      if (e.target.tagName === 'VIDEO') {
-        const layer = e.target.closest('.video-layer');
+    // Video ended — direct binding (ended event does not bubble reliably)
+    document.querySelectorAll('.video-layer video').forEach(video => {
+      video.addEventListener('ended', () => {
+        const layer = video.closest('.video-layer');
         const preview = layer?.querySelector('.frame-preview');
         const previewInfo = layer?.querySelector('.frame-preview-info');
         const playBtn = layer?.querySelector('.video-play-btn');
-        e.target.classList.remove('visible');
+        video.classList.remove('visible');
         if (preview) preview.classList.remove('hidden');
         if (previewInfo) previewInfo.classList.remove('hidden');
         if (playBtn) playBtn.style.display = 'flex';
         AudioController.onVideoEnded();
-      }
-    }, true);
+      });
+    });
   }
 
   // ─── SWIPE ───
@@ -731,7 +731,7 @@ const App = (function() {
     }
 
     frameContainer.addEventListener('touchstart', e => {
-      if (e.target.closest('.video-play-btn, .video-layer video')) return;
+      if (e.target.closest('.video-play-btn')) return;
       onStart(e.touches[0].clientY, e.touches[0].clientX);
     }, {passive: true});
     frameContainer.addEventListener('touchend', e => {
@@ -740,7 +740,7 @@ const App = (function() {
     }, {passive: true});
 
     frameContainer.addEventListener('mousedown', e => {
-      if (e.target.closest('.video-play-btn, .video-layer video')) return;
+      if (e.target.closest('.video-play-btn')) return;
       onStart(e.clientY, e.clientX);
     });
     frameContainer.addEventListener('mouseup', e => {
@@ -755,7 +755,7 @@ const App = (function() {
     if (!episodeViewer) return;
     episodeViewer.addEventListener('click', (e) => {
       // Ignore clicks on interactive elements
-      if (e.target.closest('.frame-top-bar, .bottom-sheet, .video-play-btn, .video-layer video, .bs-controls, .bs-expanded')) return;
+      if (e.target.closest('.frame-top-bar, .bottom-sheet, .video-play-btn, .video-layer, .bs-controls, .bs-expanded')) return;
       episodeViewer.classList.toggle('ui-hidden');
       if (!episodeViewer.classList.contains('ui-hidden')) {
         clearTimeout(uiHideTimeout);
