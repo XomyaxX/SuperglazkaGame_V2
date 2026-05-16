@@ -371,7 +371,8 @@ const BottomSheet = {
     };
     const getExpandedH = () => Math.min(window.innerHeight * 0.78, window.innerHeight - 80);
 
-    const onStart = (y) => {
+    const onStart = (y, target) => {
+      if (target && target.closest('button, input, .bs-toggle, .bs-game-chip, .bs-audio-panel, select, textarea')) return;
       startY = y;
       isDragging = true;
       const collapsedH = getCollapsedH();
@@ -396,6 +397,7 @@ const BottomSheet = {
       this.el.style.transition = '';
       this.el.style.maxHeight = '';
       const delta = startY - y;
+      if (Math.abs(delta) < 5) return; // treat as click
       const wasHidden = this.el.classList.contains('hidden');
       const wasCollapsed = this.el.classList.contains('collapsed');
 
@@ -412,12 +414,13 @@ const BottomSheet = {
       }
     };
 
-    this.dragHandle.addEventListener('touchstart', (e) => onStart(e.touches[0].clientY), {passive: true});
-    this.dragHandle.addEventListener('touchmove', (e) => onMove(e.touches[0].clientY), {passive: true});
-    this.dragHandle.addEventListener('touchend', (e) => onEnd(e.changedTouches[0].clientY), {passive: true});
+    this.el.addEventListener('touchstart', (e) => onStart(e.touches[0].clientY, e.target), {passive: true});
+    this.el.addEventListener('touchmove', (e) => onMove(e.touches[0].clientY), {passive: true});
+    this.el.addEventListener('touchend', (e) => onEnd(e.changedTouches[0].clientY), {passive: true});
 
-    this.dragHandle.addEventListener('mousedown', (e) => {
-      onStart(e.clientY);
+    this.el.addEventListener('mousedown', (e) => {
+      onStart(e.clientY, e.target);
+      if (!isDragging) return;
       const moveHandler = (ev) => onMove(ev.clientY);
       const upHandler = (ev) => {
         onEnd(ev.clientY);
