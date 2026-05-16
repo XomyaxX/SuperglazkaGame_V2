@@ -1650,6 +1650,9 @@ body {
 }
 
 /* Collapsed state marker */
+.bottom-sheet.collapsed {
+  max-height: 110px;
+}
 .bottom-sheet.collapsed .bs-expanded {
   opacity: 0;
   pointer-events: none;
@@ -1667,12 +1670,58 @@ body {
 
 .bottom-sheet.collapsed .bs-subtitle {
   display: block;
-  white-space: nowrap;
+  height: 1.5em;
+  line-height: 1.5em;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-align: center;
+  transition: opacity .3s ease, transform .3s ease;
+}
+.bottom-sheet.collapsed .bs-subtitle-icon {
+  display: none;
+}
+.bottom-sheet.collapsed .bs-subtitle.switching {
+  opacity: 0;
+  transform: translateY(6px);
 }
 .bottom-sheet:not(.collapsed) .bs-subtitle {
   display: none;
+}
+
+/* Floating subtitle overlay */
+.subtitle-overlay {
+  position: absolute;
+  bottom: 130px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  max-width: 90%;
+  text-align: center;
+  pointer-events: none;
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(4px);
+  transition: opacity .3s ease;
+}
+.sub-line {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+  transition: opacity .3s ease, transform .3s ease;
+}
+.subtitle-overlay.switching .sub-line {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.subtitle-overlay.hidden {
+  opacity: 0;
+}
+
+/* Hide legacy bs-subtitle completely (replaced by overlay) */
+.bs-subtitle {
+  display: none !important;
 }
 
 /* Drag handle */
@@ -2016,7 +2065,8 @@ body {
 
 /* ─── UI HIDE MODE ─── */
 #episode-viewer.ui-hidden .frame-top-bar,
-#episode-viewer.ui-hidden .bottom-sheet {
+#episode-viewer.ui-hidden .bottom-sheet,
+#episode-viewer.ui-hidden .subtitle-overlay {
   opacity: 0;
   pointer-events: none;
 }
@@ -2052,10 +2102,17 @@ body {
     border-radius: var(--radius-md) var(--radius-md) 0 0;
   }
   .bottom-sheet.collapsed {
-    max-height: 78px;
+    max-height: 100px;
   }
   .bs-subtitle {
     font-size: 13px;
+  }
+  .subtitle-overlay {
+    bottom: 120px;
+    padding: 6px 12px;
+  }
+  .sub-line {
+    font-size: 14px;
   }
   .bs-audio-toggle {
     width: 36px;

@@ -245,6 +245,31 @@ const AudioController = {
 };
 
 // ═══════════════════════════════════════════════════════════
+// SUBTITLE OVERLAY — floating line above bottom sheet
+// ═══════════════════════════════════════════════════════════
+const SubtitleOverlay = {
+  el: document.getElementById('subtitleOverlay'),
+  lineEl: document.getElementById('subLine'),
+
+  setText(text) {
+    if (!this.el || !this.lineEl) return;
+    if (this._last === text) return;
+    this._last = text;
+    this.el.classList.add('switching');
+    setTimeout(() => {
+      this.lineEl.textContent = text;
+      this.el.classList.remove('switching');
+    }, 300);
+  },
+
+  clear() {
+    this._last = null;
+    if (this.lineEl) this.lineEl.textContent = '';
+    if (this.el) this.el.classList.remove('switching');
+  }
+};
+
+// ═══════════════════════════════════════════════════════════
 // BOTTOM SHEET — unified bottom panel
 // ═══════════════════════════════════════════════════════════
 const BottomSheet = {
@@ -303,7 +328,7 @@ const BottomSheet = {
   recalcSnapPoints() {
     if (!this.el) return;
     const fullH = this.el.offsetHeight;
-    const collapsedH = 86; // approximate visible height in collapsed mode
+    const collapsedH = 110; // visible height in collapsed mode
     const handleH = this.dragHandle ? this.dragHandle.offsetHeight + 8 : 12;
     this.snapPoints = {
       expanded: 0,
@@ -342,6 +367,7 @@ const BottomSheet = {
     this.el.classList.remove('collapsed', 'hidden');
     this.applyTranslateY(this.snapPoints.expanded, true);
     if (this.backdrop) this.backdrop.classList.add('visible');
+    if (SubtitleOverlay.el) SubtitleOverlay.el.classList.add('hidden');
   },
 
   collapse() {
@@ -350,6 +376,7 @@ const BottomSheet = {
     this.el.classList.remove('hidden');
     this.applyTranslateY(this.snapPoints.collapsed, true);
     if (this.backdrop) this.backdrop.classList.remove('visible');
+    if (SubtitleOverlay.el) SubtitleOverlay.el.classList.remove('hidden');
   },
 
   hide() {
@@ -358,6 +385,7 @@ const BottomSheet = {
     this.el.classList.remove('collapsed');
     this.applyTranslateY(this.snapPoints.hidden, true);
     if (this.backdrop) this.backdrop.classList.remove('visible');
+    if (SubtitleOverlay.el) SubtitleOverlay.el.classList.remove('hidden');
   },
 
   setSubtitle(text, icon) {
@@ -564,6 +592,22 @@ const App = (function() {
     }, delayMs || 350);
   }
 
+  function splitLines(text, maxLen = 42) {
+    const words = text.split(/\s+/);
+    const lines = [];
+    let line = '';
+    words.forEach(w => {
+      if ((line + ' ' + w).trim().length > maxLen) {
+        if (line.trim()) lines.push(line.trim());
+        line = w;
+      } else {
+        line += (line ? ' ' : '') + w;
+      }
+    });
+    if (line.trim()) lines.push(line.trim());
+    return lines;
+  }
+
   // ─── RENDER FRAME ───
   function renderFrame(frameData, idx, total) {
     const hasVideo = !!frameData.videoSrc;
@@ -661,7 +705,7 @@ const App = (function() {
     const frameData = frames[idx];
 
     updateProgressDots(idx, frames.length);
-    BottomSheet.setSubtitle('');
+    SubtitleOverlay.clear();
     BottomSheet.setNarratorFull(frameData?.narration || '');
     BottomSheet.renderGameDock(frameData?.availableGames || []);
     BottomSheet.renderGamePanel(frameData?.availableGames || []);
@@ -688,15 +732,28 @@ const App = (function() {
 
     const narrationText = frameData?.narration || '';
     if (narrationText) {
-      const words = narrationText.trim().split(/\s+/);
-      const wordCount = words.length;
+      const lines = splitLines(narrationText, 42);
+      const lineCount = lines.length;
+      let currentLineIdx = -1;
+
+      const updateLine = (lineIdx) => {
+        if (lineIdx === currentLineIdx) return;
+        currentLineIdx = lineIdx;
+        SubtitleOverlay.setText(lines[lineIdx]);
+      };
 
       const fallbackTypewriter = () => {
-        typeWriter(narrationText,
-          (text) => BottomSheet.setSubtitle(text),
-          () => { onTypewriterEnd(); },
-          Math.max(150, Math.min(800, 1000 / 2.2))
-        );
+        let idx = 0;
+        const delay = Math.max(300, Math.min(800, 1000 / 2.2));
+        typeWriterInterval = setInterval(() => {
+          if (idx < lineCount) {
+            updateLine(idx);
+            idx++;
+          } else {
+            stopTypeWriter();
+            onTypewriterEnd();
+          }
+        }, delay);
       };
 
       const narrationAudio = AudioController.currentAudio;
@@ -710,13 +767,13 @@ const App = (function() {
 
           const onTimeUpdate = () => {
             const progress = narrationAudio.currentTime / duration;
-            const wordIdx = Math.min(wordCount - 1, Math.floor(progress * wordCount));
-            BottomSheet.setSubtitle(words.slice(0, wordIdx + 1).join(' '));
+            const lineIdx = Math.min(lineCount - 1, Math.floor(progress * lineCount));
+            updateLine(lineIdx);
           };
 
           const onEnded = () => {
             if (subtitleSyncCleanup) { subtitleSyncCleanup(); subtitleSyncCleanup = null; }
-            BottomSheet.setSubtitle(narrationText);
+            updateLine(lineCount - 1);
             onTypewriterEnd();
           };
 
