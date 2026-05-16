@@ -52,7 +52,10 @@
     // 4. BottomSheet transform must be within snapPoints
     const bs = BottomSheet;
     if (bs.el && bs.snapPoints) {
-      const y = bs.getTranslateY();
+      // Read inline style (not getComputedStyle) to avoid catching transition mid-flight
+      const inlineTransform = bs.el.style.transform || '';
+      const m = inlineTransform.match(/translateY\(([-\d.]+)px\)/);
+      const y = m ? parseFloat(m[1]) : bs.snapPoints[bs.state];
       const maxY = bs.snapPoints.hidden;
       if (y > maxY + 5) {
         issues.push(`BottomSheet overflow: translateY=${y} > hidden=${maxY}`);

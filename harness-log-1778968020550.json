@@ -1,0 +1,2430 @@
+[
+  {
+    "t": "89.5",
+    "type": "INIT",
+    "msg": "Harness ready"
+  },
+  {
+    "t": "3246.4",
+    "type": "ACTION",
+    "msg": "1/1000: nextFrame"
+  },
+  {
+    "t": "3554.5",
+    "type": "ACTION",
+    "msg": "2/1000: simulateResize"
+  },
+  {
+    "t": "3862.8",
+    "type": "ACTION",
+    "msg": "3/1000: simulateResize"
+  },
+  {
+    "t": "4171.5",
+    "type": "ACTION",
+    "msg": "4/1000: pauseResumeAudio"
+  },
+  {
+    "t": "4475.6",
+    "type": "ACTION",
+    "msg": "5/1000: hideBottomSheet"
+  },
+  {
+    "t": "4783.7",
+    "type": "ACTION",
+    "msg": "6/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "5110.6",
+    "type": "ACTION",
+    "msg": "7/1000: seekAudioRandom"
+  },
+  {
+    "t": "5430.4",
+    "type": "ACTION",
+    "msg": "8/1000: toggleVideoTrack"
+  },
+  {
+    "t": "5735.7",
+    "type": "ACTION",
+    "msg": "9/1000: prevFrame"
+  },
+  {
+    "t": "6045.5",
+    "type": "ACTION",
+    "msg": "10/1000: toggleBottomSheet"
+  },
+  {
+    "t": "6354.6",
+    "type": "ACTION",
+    "msg": "11/1000: toggleVideoTrack"
+  },
+  {
+    "t": "6663.8",
+    "type": "ACTION",
+    "msg": "12/1000: toggleBottomSheet"
+  },
+  {
+    "t": "6978.9",
+    "type": "ACTION",
+    "msg": "13/1000: simulateResize"
+  },
+  {
+    "t": "7285.1",
+    "type": "ACTION",
+    "msg": "14/1000: collapseBottomSheet"
+  },
+  {
+    "t": "7596.2",
+    "type": "ACTION",
+    "msg": "15/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "7907.7",
+    "type": "ACTION",
+    "msg": "16/1000: expandBottomSheet"
+  },
+  {
+    "t": "8216.6",
+    "type": "ACTION",
+    "msg": "17/1000: simulateResize"
+  },
+  {
+    "t": "8537.8",
+    "type": "ACTION",
+    "msg": "18/1000: toggleBottomSheet"
+  },
+  {
+    "t": "8842.6",
+    "type": "ACTION",
+    "msg": "19/1000: prevFrame"
+  },
+  {
+    "t": "9161.7",
+    "type": "ACTION",
+    "msg": "20/1000: hideBottomSheet"
+  },
+  {
+    "t": "9477.9",
+    "type": "ACTION",
+    "msg": "21/1000: toggleVideoTrack"
+  },
+  {
+    "t": "9783.3",
+    "type": "ACTION",
+    "msg": "22/1000: prevFrame"
+  },
+  {
+    "t": "10088.2",
+    "type": "ACTION",
+    "msg": "23/1000: hideBottomSheet"
+  },
+  {
+    "t": "10392.6",
+    "type": "ACTION",
+    "msg": "24/1000: toggleVideoTrack"
+  },
+  {
+    "t": "10700.2",
+    "type": "ACTION",
+    "msg": "25/1000: prevFrame"
+  },
+  {
+    "t": "11010.1",
+    "type": "ACTION",
+    "msg": "26/1000: nextFrame"
+  },
+  {
+    "t": "11320.5",
+    "type": "ACTION",
+    "msg": "27/1000: toggleBottomSheet"
+  },
+  {
+    "t": "11626.0",
+    "type": "ACTION",
+    "msg": "28/1000: toggleVideoTrack"
+  },
+  {
+    "t": "11929.5",
+    "type": "ACTION",
+    "msg": "29/1000: hideBottomSheet"
+  },
+  {
+    "t": "12237.9",
+    "type": "ACTION",
+    "msg": "30/1000: toggleVideoTrack"
+  },
+  {
+    "t": "12542.3",
+    "type": "ACTION",
+    "msg": "31/1000: nextFrame"
+  },
+  {
+    "t": "12847.1",
+    "type": "ACTION",
+    "msg": "32/1000: collapseBottomSheet"
+  },
+  {
+    "t": "13153.8",
+    "type": "ACTION",
+    "msg": "33/1000: hideBottomSheet"
+  },
+  {
+    "t": "13459.1",
+    "type": "ACTION",
+    "msg": "34/1000: toggleVideoTrack"
+  },
+  {
+    "t": "13766.5",
+    "type": "ACTION",
+    "msg": "35/1000: expandBottomSheet"
+  },
+  {
+    "t": "14071.9",
+    "type": "ACTION",
+    "msg": "36/1000: hideBottomSheet"
+  },
+  {
+    "t": "14384.1",
+    "type": "ACTION",
+    "msg": "37/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "14688.5",
+    "type": "ACTION",
+    "msg": "38/1000: pauseResumeAudio"
+  },
+  {
+    "t": "14992.4",
+    "type": "ACTION",
+    "msg": "39/1000: simulateResize"
+  },
+  {
+    "t": "14995.7",
+    "type": "INVARIANT_FAIL",
+    "msg": "Step 39",
+    "detail": "BottomSheet overflow: translateY=688 > hidden=520"
+  },
+  {
+    "t": "15296.9",
+    "type": "ACTION",
+    "msg": "40/1000: nextFrame"
+  },
+  {
+    "t": "15605.2",
+    "type": "ACTION",
+    "msg": "41/1000: toggleVideoTrack"
+  },
+  {
+    "t": "15912.0",
+    "type": "ACTION",
+    "msg": "42/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "16214.2",
+    "type": "ACTION",
+    "msg": "43/1000: prevFrame"
+  },
+  {
+    "t": "16524.1",
+    "type": "ACTION",
+    "msg": "44/1000: toggleVideoTrack"
+  },
+  {
+    "t": "16843.2",
+    "type": "ACTION",
+    "msg": "45/1000: toggleBottomSheet"
+  },
+  {
+    "t": "17147.8",
+    "type": "ACTION",
+    "msg": "46/1000: collapseBottomSheet"
+  },
+  {
+    "t": "17450.9",
+    "type": "ACTION",
+    "msg": "47/1000: prevFrame"
+  },
+  {
+    "t": "17755.8",
+    "type": "ACTION",
+    "msg": "48/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "18061.5",
+    "type": "ACTION",
+    "msg": "49/1000: expandBottomSheet"
+  },
+  {
+    "t": "18370.0",
+    "type": "ACTION",
+    "msg": "50/1000: startGameIfAvailable"
+  },
+  {
+    "t": "18696.1",
+    "type": "ACTION",
+    "msg": "51/1000: hideBottomSheet"
+  },
+  {
+    "t": "19013.0",
+    "type": "ACTION",
+    "msg": "52/1000: toggleBottomSheet"
+  },
+  {
+    "t": "19326.1",
+    "type": "ACTION",
+    "msg": "53/1000: prevFrame"
+  },
+  {
+    "t": "19631.0",
+    "type": "ACTION",
+    "msg": "54/1000: cinemaToggle"
+  },
+  {
+    "t": "19937.0",
+    "type": "ACTION",
+    "msg": "55/1000: prevFrame"
+  },
+  {
+    "t": "20242.9",
+    "type": "ACTION",
+    "msg": "56/1000: hideBottomSheet"
+  },
+  {
+    "t": "20551.2",
+    "type": "ACTION",
+    "msg": "57/1000: toggleBottomSheet"
+  },
+  {
+    "t": "20860.2",
+    "type": "ACTION",
+    "msg": "58/1000: nextFrame"
+  },
+  {
+    "t": "21167.8",
+    "type": "ACTION",
+    "msg": "59/1000: nextFrame"
+  },
+  {
+    "t": "21475.1",
+    "type": "ACTION",
+    "msg": "60/1000: cinemaToggle"
+  },
+  {
+    "t": "21776.9",
+    "type": "ACTION",
+    "msg": "61/1000: toggleVideoTrack"
+  },
+  {
+    "t": "22084.5",
+    "type": "ACTION",
+    "msg": "62/1000: prevFrame"
+  },
+  {
+    "t": "22389.3",
+    "type": "ACTION",
+    "msg": "63/1000: toggleVideoTrack"
+  },
+  {
+    "t": "22697.3",
+    "type": "ACTION",
+    "msg": "64/1000: seekAudioRandom"
+  },
+  {
+    "t": "23001.6",
+    "type": "ACTION",
+    "msg": "65/1000: toggleBottomSheet"
+  },
+  {
+    "t": "23311.6",
+    "type": "ACTION",
+    "msg": "66/1000: toggleBottomSheet"
+  },
+  {
+    "t": "23624.0",
+    "type": "ACTION",
+    "msg": "67/1000: prevFrame"
+  },
+  {
+    "t": "23936.4",
+    "type": "ACTION",
+    "msg": "68/1000: toggleVideoTrack"
+  },
+  {
+    "t": "24242.7",
+    "type": "ACTION",
+    "msg": "69/1000: prevFrame"
+  },
+  {
+    "t": "24547.5",
+    "type": "ACTION",
+    "msg": "70/1000: hideBottomSheet"
+  },
+  {
+    "t": "24851.4",
+    "type": "ACTION",
+    "msg": "71/1000: prevFrame"
+  },
+  {
+    "t": "25159.1",
+    "type": "ACTION",
+    "msg": "72/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "25463.6",
+    "type": "ACTION",
+    "msg": "73/1000: nextFrame"
+  },
+  {
+    "t": "25774.8",
+    "type": "ACTION",
+    "msg": "74/1000: expandBottomSheet"
+  },
+  {
+    "t": "26087.9",
+    "type": "ACTION",
+    "msg": "75/1000: toggleVideoTrack"
+  },
+  {
+    "t": "26404.5",
+    "type": "ACTION",
+    "msg": "76/1000: simulateResize"
+  },
+  {
+    "t": "26723.5",
+    "type": "ACTION",
+    "msg": "77/1000: prevFrame"
+  },
+  {
+    "t": "27039.4",
+    "type": "ACTION",
+    "msg": "78/1000: startGameIfAvailable"
+  },
+  {
+    "t": "27353.7",
+    "type": "ACTION",
+    "msg": "79/1000: expandBottomSheet"
+  },
+  {
+    "t": "27659.7",
+    "type": "ACTION",
+    "msg": "80/1000: toggleBottomSheet"
+  },
+  {
+    "t": "27978.1",
+    "type": "ACTION",
+    "msg": "81/1000: expandBottomSheet"
+  },
+  {
+    "t": "28290.8",
+    "type": "ACTION",
+    "msg": "82/1000: pauseResumeAudio"
+  },
+  {
+    "t": "28619.5",
+    "type": "ACTION",
+    "msg": "83/1000: toggleVideoTrack"
+  },
+  {
+    "t": "28933.9",
+    "type": "ACTION",
+    "msg": "84/1000: cinemaToggle"
+  },
+  {
+    "t": "29252.9",
+    "type": "ACTION",
+    "msg": "85/1000: toggleBottomSheet"
+  },
+  {
+    "t": "29557.2",
+    "type": "ACTION",
+    "msg": "86/1000: seekAudioRandom"
+  },
+  {
+    "t": "29868.3",
+    "type": "ACTION",
+    "msg": "87/1000: prevFrame"
+  },
+  {
+    "t": "30176.5",
+    "type": "ACTION",
+    "msg": "88/1000: nextFrame"
+  },
+  {
+    "t": "30481.7",
+    "type": "ACTION",
+    "msg": "89/1000: pauseResumeAudio"
+  },
+  {
+    "t": "30794.0",
+    "type": "ACTION",
+    "msg": "90/1000: prevFrame"
+  },
+  {
+    "t": "31097.9",
+    "type": "ACTION",
+    "msg": "91/1000: cinemaToggle"
+  },
+  {
+    "t": "31401.9",
+    "type": "ACTION",
+    "msg": "92/1000: nextFrame"
+  },
+  {
+    "t": "31705.8",
+    "type": "ACTION",
+    "msg": "93/1000: nextFrame"
+  },
+  {
+    "t": "32014.7",
+    "type": "ACTION",
+    "msg": "94/1000: prevFrame"
+  },
+  {
+    "t": "32320.2",
+    "type": "ACTION",
+    "msg": "95/1000: toggleVideoTrack"
+  },
+  {
+    "t": "32623.5",
+    "type": "ACTION",
+    "msg": "96/1000: hideBottomSheet"
+  },
+  {
+    "t": "32926.8",
+    "type": "ACTION",
+    "msg": "97/1000: seekAudioRandom"
+  },
+  {
+    "t": "33233.9",
+    "type": "ACTION",
+    "msg": "98/1000: nextFrame"
+  },
+  {
+    "t": "33537.3",
+    "type": "ACTION",
+    "msg": "99/1000: toggleBottomSheet"
+  },
+  {
+    "t": "33842.2",
+    "type": "ACTION",
+    "msg": "100/1000: hideBottomSheet"
+  },
+  {
+    "t": "34147.0",
+    "type": "ACTION",
+    "msg": "101/1000: hideBottomSheet"
+  },
+  {
+    "t": "34451.5",
+    "type": "ACTION",
+    "msg": "102/1000: toggleVideoTrack"
+  },
+  {
+    "t": "34757.0",
+    "type": "ACTION",
+    "msg": "103/1000: prevFrame"
+  },
+  {
+    "t": "35061.0",
+    "type": "ACTION",
+    "msg": "104/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "35362.9",
+    "type": "ACTION",
+    "msg": "105/1000: toggleVideoTrack"
+  },
+  {
+    "t": "35666.9",
+    "type": "ACTION",
+    "msg": "106/1000: nextFrame"
+  },
+  {
+    "t": "35968.3",
+    "type": "ACTION",
+    "msg": "107/1000: pauseResumeAudio"
+  },
+  {
+    "t": "36272.4",
+    "type": "ACTION",
+    "msg": "108/1000: seekAudioRandom"
+  },
+  {
+    "t": "36576.1",
+    "type": "ACTION",
+    "msg": "109/1000: expandBottomSheet"
+  },
+  {
+    "t": "36877.0",
+    "type": "ACTION",
+    "msg": "110/1000: toggleVideoTrack"
+  },
+  {
+    "t": "37197.4",
+    "type": "ACTION",
+    "msg": "111/1000: nextFrame"
+  },
+  {
+    "t": "37506.4",
+    "type": "ACTION",
+    "msg": "112/1000: seekAudioRandom"
+  },
+  {
+    "t": "37810.1",
+    "type": "ACTION",
+    "msg": "113/1000: prevFrame"
+  },
+  {
+    "t": "38114.3",
+    "type": "ACTION",
+    "msg": "114/1000: toggleVideoTrack"
+  },
+  {
+    "t": "38431.2",
+    "type": "ACTION",
+    "msg": "115/1000: nextFrame"
+  },
+  {
+    "t": "38743.4",
+    "type": "ACTION",
+    "msg": "116/1000: toggleVideoTrack"
+  },
+  {
+    "t": "39056.7",
+    "type": "ACTION",
+    "msg": "117/1000: pauseResumeAudio"
+  },
+  {
+    "t": "39370.3",
+    "type": "ACTION",
+    "msg": "118/1000: toggleBottomSheet"
+  },
+  {
+    "t": "39682.1",
+    "type": "ACTION",
+    "msg": "119/1000: hideBottomSheet"
+  },
+  {
+    "t": "39987.4",
+    "type": "ACTION",
+    "msg": "120/1000: pauseResumeAudio"
+  },
+  {
+    "t": "40288.7",
+    "type": "ACTION",
+    "msg": "121/1000: toggleBottomSheet"
+  },
+  {
+    "t": "40597.7",
+    "type": "ACTION",
+    "msg": "122/1000: nextFrame"
+  },
+  {
+    "t": "40902.8",
+    "type": "ACTION",
+    "msg": "123/1000: prevFrame"
+  },
+  {
+    "t": "41210.4",
+    "type": "ACTION",
+    "msg": "124/1000: cinemaToggle"
+  },
+  {
+    "t": "41517.5",
+    "type": "ACTION",
+    "msg": "125/1000: toggleBottomSheet"
+  },
+  {
+    "t": "41822.4",
+    "type": "ACTION",
+    "msg": "126/1000: seekAudioRandom"
+  },
+  {
+    "t": "42128.9",
+    "type": "ACTION",
+    "msg": "127/1000: prevFrame"
+  },
+  {
+    "t": "42433.1",
+    "type": "ACTION",
+    "msg": "128/1000: cinemaToggle"
+  },
+  {
+    "t": "42746.2",
+    "type": "ACTION",
+    "msg": "129/1000: seekAudioRandom"
+  },
+  {
+    "t": "43049.1",
+    "type": "ACTION",
+    "msg": "130/1000: toggleBottomSheet"
+  },
+  {
+    "t": "43353.5",
+    "type": "ACTION",
+    "msg": "131/1000: expandBottomSheet"
+  },
+  {
+    "t": "43657.4",
+    "type": "ACTION",
+    "msg": "132/1000: hideBottomSheet"
+  },
+  {
+    "t": "43975.3",
+    "type": "ACTION",
+    "msg": "133/1000: toggleBottomSheet"
+  },
+  {
+    "t": "44282.9",
+    "type": "ACTION",
+    "msg": "134/1000: expandBottomSheet"
+  },
+  {
+    "t": "44586.2",
+    "type": "ACTION",
+    "msg": "135/1000: expandBottomSheet"
+  },
+  {
+    "t": "44888.7",
+    "type": "ACTION",
+    "msg": "136/1000: pauseResumeAudio"
+  },
+  {
+    "t": "45193.3",
+    "type": "ACTION",
+    "msg": "137/1000: pauseResumeAudio"
+  },
+  {
+    "t": "45497.6",
+    "type": "ACTION",
+    "msg": "138/1000: simulateResize"
+  },
+  {
+    "t": "45798.2",
+    "type": "ACTION",
+    "msg": "139/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "46100.5",
+    "type": "ACTION",
+    "msg": "140/1000: prevFrame"
+  },
+  {
+    "t": "46404.7",
+    "type": "ACTION",
+    "msg": "141/1000: simulateResize"
+  },
+  {
+    "t": "46708.3",
+    "type": "ACTION",
+    "msg": "142/1000: nextFrame"
+  },
+  {
+    "t": "47044.5",
+    "type": "ACTION",
+    "msg": "143/1000: pauseResumeAudio"
+  },
+  {
+    "t": "47366.2",
+    "type": "ACTION",
+    "msg": "144/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "47670.1",
+    "type": "ACTION",
+    "msg": "145/1000: pauseResumeAudio"
+  },
+  {
+    "t": "47978.2",
+    "type": "ACTION",
+    "msg": "146/1000: hideBottomSheet"
+  },
+  {
+    "t": "48280.9",
+    "type": "ACTION",
+    "msg": "147/1000: toggleBottomSheet"
+  },
+  {
+    "t": "48587.4",
+    "type": "ACTION",
+    "msg": "148/1000: prevFrame"
+  },
+  {
+    "t": "48890.5",
+    "type": "ACTION",
+    "msg": "149/1000: collapseBottomSheet"
+  },
+  {
+    "t": "49191.6",
+    "type": "ACTION",
+    "msg": "150/1000: prevFrame"
+  },
+  {
+    "t": "49495.5",
+    "type": "ACTION",
+    "msg": "151/1000: toggleBottomSheet"
+  },
+  {
+    "t": "49801.7",
+    "type": "ACTION",
+    "msg": "152/1000: pauseResumeAudio"
+  },
+  {
+    "t": "50121.0",
+    "type": "ACTION",
+    "msg": "153/1000: nextFrame"
+  },
+  {
+    "t": "50453.7",
+    "type": "ACTION",
+    "msg": "154/1000: toggleVideoTrack"
+  },
+  {
+    "t": "50784.2",
+    "type": "ACTION",
+    "msg": "155/1000: toggleBottomSheet"
+  },
+  {
+    "t": "51118.3",
+    "type": "ACTION",
+    "msg": "156/1000: toggleBottomSheet"
+  },
+  {
+    "t": "51420.6",
+    "type": "ACTION",
+    "msg": "157/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "51735.0",
+    "type": "ACTION",
+    "msg": "158/1000: collapseBottomSheet"
+  },
+  {
+    "t": "52037.2",
+    "type": "ACTION",
+    "msg": "159/1000: nextFrame"
+  },
+  {
+    "t": "52341.4",
+    "type": "ACTION",
+    "msg": "160/1000: nextFrame"
+  },
+  {
+    "t": "52648.2",
+    "type": "ACTION",
+    "msg": "161/1000: collapseBottomSheet"
+  },
+  {
+    "t": "52952.9",
+    "type": "ACTION",
+    "msg": "162/1000: simulateResize"
+  },
+  {
+    "t": "52953.4",
+    "type": "INVARIANT_FAIL",
+    "msg": "Step 162",
+    "detail": "BottomSheet overflow: translateY=518 > hidden=83"
+  },
+  {
+    "t": "53253.7",
+    "type": "ACTION",
+    "msg": "163/1000: pauseResumeAudio"
+  },
+  {
+    "t": "53559.2",
+    "type": "ACTION",
+    "msg": "164/1000: cinemaToggle"
+  },
+  {
+    "t": "53862.7",
+    "type": "ACTION",
+    "msg": "165/1000: nextFrame"
+  },
+  {
+    "t": "54166.9",
+    "type": "ACTION",
+    "msg": "166/1000: nextFrame"
+  },
+  {
+    "t": "54468.5",
+    "type": "ACTION",
+    "msg": "167/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "54769.8",
+    "type": "ACTION",
+    "msg": "168/1000: toggleBottomSheet"
+  },
+  {
+    "t": "55074.8",
+    "type": "ACTION",
+    "msg": "169/1000: pauseResumeAudio"
+  },
+  {
+    "t": "55383.2",
+    "type": "ACTION",
+    "msg": "170/1000: pauseResumeAudio"
+  },
+  {
+    "t": "55685.8",
+    "type": "ACTION",
+    "msg": "171/1000: pauseResumeAudio"
+  },
+  {
+    "t": "55991.3",
+    "type": "ACTION",
+    "msg": "172/1000: pauseResumeAudio"
+  },
+  {
+    "t": "56295.3",
+    "type": "ACTION",
+    "msg": "173/1000: hideBottomSheet"
+  },
+  {
+    "t": "56602.8",
+    "type": "ACTION",
+    "msg": "174/1000: prevFrame"
+  },
+  {
+    "t": "56918.6",
+    "type": "ACTION",
+    "msg": "175/1000: toggleBottomSheet"
+  },
+  {
+    "t": "57221.4",
+    "type": "ACTION",
+    "msg": "176/1000: nextFrame"
+  },
+  {
+    "t": "57526.7",
+    "type": "ACTION",
+    "msg": "177/1000: hideBottomSheet"
+  },
+  {
+    "t": "57829.3",
+    "type": "ACTION",
+    "msg": "178/1000: prevFrame"
+  },
+  {
+    "t": "58138.9",
+    "type": "ACTION",
+    "msg": "179/1000: startGameIfAvailable"
+  },
+  {
+    "t": "58441.4",
+    "type": "ACTION",
+    "msg": "180/1000: collapseBottomSheet"
+  },
+  {
+    "t": "58750.4",
+    "type": "ACTION",
+    "msg": "181/1000: simulateResize"
+  },
+  {
+    "t": "59053.4",
+    "type": "ACTION",
+    "msg": "182/1000: prevFrame"
+  },
+  {
+    "t": "59368.1",
+    "type": "ACTION",
+    "msg": "183/1000: nextFrame"
+  },
+  {
+    "t": "59671.6",
+    "type": "ACTION",
+    "msg": "184/1000: nextFrame"
+  },
+  {
+    "t": "59977.5",
+    "type": "ACTION",
+    "msg": "185/1000: nextFrame"
+  },
+  {
+    "t": "60283.5",
+    "type": "ACTION",
+    "msg": "186/1000: toggleBottomSheet"
+  },
+  {
+    "t": "60586.6",
+    "type": "ACTION",
+    "msg": "187/1000: cinemaToggle"
+  },
+  {
+    "t": "60903.6",
+    "type": "ACTION",
+    "msg": "188/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "61211.5",
+    "type": "ACTION",
+    "msg": "189/1000: pauseResumeAudio"
+  },
+  {
+    "t": "61522.8",
+    "type": "ACTION",
+    "msg": "190/1000: pauseResumeAudio"
+  },
+  {
+    "t": "61829.3",
+    "type": "ACTION",
+    "msg": "191/1000: collapseBottomSheet"
+  },
+  {
+    "t": "62137.2",
+    "type": "ACTION",
+    "msg": "192/1000: prevFrame"
+  },
+  {
+    "t": "62444.3",
+    "type": "ACTION",
+    "msg": "193/1000: seekAudioRandom"
+  },
+  {
+    "t": "62756.9",
+    "type": "ACTION",
+    "msg": "194/1000: collapseBottomSheet"
+  },
+  {
+    "t": "63066.5",
+    "type": "ACTION",
+    "msg": "195/1000: toggleBottomSheet"
+  },
+  {
+    "t": "63370.5",
+    "type": "ACTION",
+    "msg": "196/1000: toggleBottomSheet"
+  },
+  {
+    "t": "63703.9",
+    "type": "ACTION",
+    "msg": "197/1000: prevFrame"
+  },
+  {
+    "t": "64022.2",
+    "type": "ACTION",
+    "msg": "198/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "64329.1",
+    "type": "ACTION",
+    "msg": "199/1000: collapseBottomSheet"
+  },
+  {
+    "t": "64632.6",
+    "type": "ACTION",
+    "msg": "200/1000: nextFrame"
+  },
+  {
+    "t": "64940.7",
+    "type": "ACTION",
+    "msg": "201/1000: expandBottomSheet"
+  },
+  {
+    "t": "65248.4",
+    "type": "ACTION",
+    "msg": "202/1000: nextFrame"
+  },
+  {
+    "t": "65565.2",
+    "type": "ACTION",
+    "msg": "203/1000: pauseResumeAudio"
+  },
+  {
+    "t": "65869.5",
+    "type": "ACTION",
+    "msg": "204/1000: expandBottomSheet"
+  },
+  {
+    "t": "66181.6",
+    "type": "ACTION",
+    "msg": "205/1000: toggleVideoTrack"
+  },
+  {
+    "t": "66492.5",
+    "type": "ACTION",
+    "msg": "206/1000: nextFrame"
+  },
+  {
+    "t": "66814.3",
+    "type": "ACTION",
+    "msg": "207/1000: seekAudioRandom"
+  },
+  {
+    "t": "67128.0",
+    "type": "ACTION",
+    "msg": "208/1000: prevFrame"
+  },
+  {
+    "t": "67433.7",
+    "type": "ACTION",
+    "msg": "209/1000: toggleBottomSheet"
+  },
+  {
+    "t": "67737.4",
+    "type": "ACTION",
+    "msg": "210/1000: toggleBottomSheet"
+  },
+  {
+    "t": "68041.7",
+    "type": "ACTION",
+    "msg": "211/1000: hideBottomSheet"
+  },
+  {
+    "t": "68355.0",
+    "type": "ACTION",
+    "msg": "212/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "68661.7",
+    "type": "ACTION",
+    "msg": "213/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "68966.7",
+    "type": "ACTION",
+    "msg": "214/1000: startGameIfAvailable"
+  },
+  {
+    "t": "69268.6",
+    "type": "ACTION",
+    "msg": "215/1000: prevFrame"
+  },
+  {
+    "t": "69573.6",
+    "type": "ACTION",
+    "msg": "216/1000: collapseBottomSheet"
+  },
+  {
+    "t": "69875.5",
+    "type": "ACTION",
+    "msg": "217/1000: pauseResumeAudio"
+  },
+  {
+    "t": "70179.1",
+    "type": "ACTION",
+    "msg": "218/1000: collapseBottomSheet"
+  },
+  {
+    "t": "70483.0",
+    "type": "ACTION",
+    "msg": "219/1000: nextFrame"
+  },
+  {
+    "t": "70786.5",
+    "type": "ACTION",
+    "msg": "220/1000: prevFrame"
+  },
+  {
+    "t": "71096.0",
+    "type": "ACTION",
+    "msg": "221/1000: collapseBottomSheet"
+  },
+  {
+    "t": "71401.7",
+    "type": "ACTION",
+    "msg": "222/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "71704.5",
+    "type": "ACTION",
+    "msg": "223/1000: prevFrame"
+  },
+  {
+    "t": "72009.0",
+    "type": "ACTION",
+    "msg": "224/1000: cinemaToggle"
+  },
+  {
+    "t": "72312.7",
+    "type": "ACTION",
+    "msg": "225/1000: collapseBottomSheet"
+  },
+  {
+    "t": "72619.0",
+    "type": "ACTION",
+    "msg": "226/1000: cinemaToggle"
+  },
+  {
+    "t": "72923.9",
+    "type": "ACTION",
+    "msg": "227/1000: prevFrame"
+  },
+  {
+    "t": "73228.6",
+    "type": "ACTION",
+    "msg": "228/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "73531.5",
+    "type": "ACTION",
+    "msg": "229/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "73833.7",
+    "type": "ACTION",
+    "msg": "230/1000: toggleBottomSheet"
+  },
+  {
+    "t": "74137.1",
+    "type": "ACTION",
+    "msg": "231/1000: prevFrame"
+  },
+  {
+    "t": "74455.6",
+    "type": "ACTION",
+    "msg": "232/1000: nextFrame"
+  },
+  {
+    "t": "74785.6",
+    "type": "ACTION",
+    "msg": "233/1000: hideBottomSheet"
+  },
+  {
+    "t": "75110.6",
+    "type": "ACTION",
+    "msg": "234/1000: toggleBottomSheet"
+  },
+  {
+    "t": "75420.4",
+    "type": "ACTION",
+    "msg": "235/1000: expandBottomSheet"
+  },
+  {
+    "t": "75725.4",
+    "type": "ACTION",
+    "msg": "236/1000: pauseResumeAudio"
+  },
+  {
+    "t": "76038.1",
+    "type": "ACTION",
+    "msg": "237/1000: hideBottomSheet"
+  },
+  {
+    "t": "76344.2",
+    "type": "ACTION",
+    "msg": "238/1000: hideBottomSheet"
+  },
+  {
+    "t": "76656.0",
+    "type": "ACTION",
+    "msg": "239/1000: toggleBottomSheet"
+  },
+  {
+    "t": "76956.9",
+    "type": "ACTION",
+    "msg": "240/1000: nextFrame"
+  },
+  {
+    "t": "77261.8",
+    "type": "ACTION",
+    "msg": "241/1000: toggleBottomSheet"
+  },
+  {
+    "t": "77568.0",
+    "type": "ACTION",
+    "msg": "242/1000: nextFrame"
+  },
+  {
+    "t": "77875.4",
+    "type": "ACTION",
+    "msg": "243/1000: collapseBottomSheet"
+  },
+  {
+    "t": "78184.5",
+    "type": "ACTION",
+    "msg": "244/1000: prevFrame"
+  },
+  {
+    "t": "78488.9",
+    "type": "ACTION",
+    "msg": "245/1000: cinemaToggle"
+  },
+  {
+    "t": "78796.3",
+    "type": "ACTION",
+    "msg": "246/1000: collapseBottomSheet"
+  },
+  {
+    "t": "79102.5",
+    "type": "ACTION",
+    "msg": "247/1000: seekAudioRandom"
+  },
+  {
+    "t": "79405.1",
+    "type": "ACTION",
+    "msg": "248/1000: expandBottomSheet"
+  },
+  {
+    "t": "79707.9",
+    "type": "ACTION",
+    "msg": "249/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "80014.1",
+    "type": "ACTION",
+    "msg": "250/1000: simulateResize"
+  },
+  {
+    "t": "80317.1",
+    "type": "ACTION",
+    "msg": "251/1000: nextFrame"
+  },
+  {
+    "t": "80624.5",
+    "type": "ACTION",
+    "msg": "252/1000: prevFrame"
+  },
+  {
+    "t": "80941.9",
+    "type": "ACTION",
+    "msg": "253/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "81244.3",
+    "type": "ACTION",
+    "msg": "254/1000: expandBottomSheet"
+  },
+  {
+    "t": "81546.4",
+    "type": "ACTION",
+    "msg": "255/1000: nextFrame"
+  },
+  {
+    "t": "81850.1",
+    "type": "ACTION",
+    "msg": "256/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "82177.6",
+    "type": "ACTION",
+    "msg": "257/1000: nextFrame"
+  },
+  {
+    "t": "82484.8",
+    "type": "ACTION",
+    "msg": "258/1000: prevFrame"
+  },
+  {
+    "t": "82789.6",
+    "type": "ACTION",
+    "msg": "259/1000: hideBottomSheet"
+  },
+  {
+    "t": "83117.1",
+    "type": "ACTION",
+    "msg": "260/1000: prevFrame"
+  },
+  {
+    "t": "83427.7",
+    "type": "ACTION",
+    "msg": "261/1000: collapseBottomSheet"
+  },
+  {
+    "t": "83732.2",
+    "type": "ACTION",
+    "msg": "262/1000: prevFrame"
+  },
+  {
+    "t": "84033.8",
+    "type": "ACTION",
+    "msg": "263/1000: toggleVideoTrack"
+  },
+  {
+    "t": "84338.1",
+    "type": "ACTION",
+    "msg": "264/1000: seekAudioRandom"
+  },
+  {
+    "t": "84642.0",
+    "type": "ACTION",
+    "msg": "265/1000: nextFrame"
+  },
+  {
+    "t": "84946.5",
+    "type": "ACTION",
+    "msg": "266/1000: pauseResumeAudio"
+  },
+  {
+    "t": "85248.3",
+    "type": "ACTION",
+    "msg": "267/1000: pauseResumeAudio"
+  },
+  {
+    "t": "85551.6",
+    "type": "ACTION",
+    "msg": "268/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "85853.5",
+    "type": "ACTION",
+    "msg": "269/1000: prevFrame"
+  },
+  {
+    "t": "86158.4",
+    "type": "ACTION",
+    "msg": "270/1000: prevFrame"
+  },
+  {
+    "t": "86464.1",
+    "type": "ACTION",
+    "msg": "271/1000: nextFrame"
+  },
+  {
+    "t": "86769.6",
+    "type": "ACTION",
+    "msg": "272/1000: toggleBottomSheet"
+  },
+  {
+    "t": "87072.1",
+    "type": "ACTION",
+    "msg": "273/1000: seekAudioRandom"
+  },
+  {
+    "t": "87390.4",
+    "type": "ACTION",
+    "msg": "274/1000: startGameIfAvailable"
+  },
+  {
+    "t": "87693.9",
+    "type": "ACTION",
+    "msg": "275/1000: toggleVideoTrack"
+  },
+  {
+    "t": "88008.9",
+    "type": "ACTION",
+    "msg": "276/1000: nextFrame"
+  },
+  {
+    "t": "88314.3",
+    "type": "ACTION",
+    "msg": "277/1000: prevFrame"
+  },
+  {
+    "t": "88628.4",
+    "type": "ACTION",
+    "msg": "278/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "88935.8",
+    "type": "ACTION",
+    "msg": "279/1000: nextFrame"
+  },
+  {
+    "t": "89242.0",
+    "type": "ACTION",
+    "msg": "280/1000: toggleBottomSheet"
+  },
+  {
+    "t": "89551.4",
+    "type": "ACTION",
+    "msg": "281/1000: prevFrame"
+  },
+  {
+    "t": "89855.7",
+    "type": "ACTION",
+    "msg": "282/1000: collapseBottomSheet"
+  },
+  {
+    "t": "90161.0",
+    "type": "ACTION",
+    "msg": "283/1000: prevFrame"
+  },
+  {
+    "t": "90467.9",
+    "type": "ACTION",
+    "msg": "284/1000: cinemaToggle"
+  },
+  {
+    "t": "90770.2",
+    "type": "ACTION",
+    "msg": "285/1000: nextFrame"
+  },
+  {
+    "t": "91078.0",
+    "type": "ACTION",
+    "msg": "286/1000: expandBottomSheet"
+  },
+  {
+    "t": "91380.4",
+    "type": "ACTION",
+    "msg": "287/1000: nextFrame"
+  },
+  {
+    "t": "91683.3",
+    "type": "ACTION",
+    "msg": "288/1000: simulateResize"
+  },
+  {
+    "t": "91993.2",
+    "type": "ACTION",
+    "msg": "289/1000: nextFrame"
+  },
+  {
+    "t": "92296.7",
+    "type": "ACTION",
+    "msg": "290/1000: simulateResize"
+  },
+  {
+    "t": "92600.7",
+    "type": "ACTION",
+    "msg": "291/1000: nextFrame"
+  },
+  {
+    "t": "92902.6",
+    "type": "ACTION",
+    "msg": "292/1000: toggleVideoTrack"
+  },
+  {
+    "t": "93204.6",
+    "type": "ACTION",
+    "msg": "293/1000: toggleBottomSheet"
+  },
+  {
+    "t": "93518.0",
+    "type": "ACTION",
+    "msg": "294/1000: pauseResumeAudio"
+  },
+  {
+    "t": "93823.7",
+    "type": "ACTION",
+    "msg": "295/1000: seekAudioRandom"
+  },
+  {
+    "t": "94124.9",
+    "type": "ACTION",
+    "msg": "296/1000: pauseResumeAudio"
+  },
+  {
+    "t": "94428.5",
+    "type": "ACTION",
+    "msg": "297/1000: prevFrame"
+  },
+  {
+    "t": "94732.3",
+    "type": "ACTION",
+    "msg": "298/1000: toggleVideoTrack"
+  },
+  {
+    "t": "95038.8",
+    "type": "ACTION",
+    "msg": "299/1000: nextFrame"
+  },
+  {
+    "t": "95343.3",
+    "type": "ACTION",
+    "msg": "300/1000: nextFrame"
+  },
+  {
+    "t": "95647.7",
+    "type": "ACTION",
+    "msg": "301/1000: prevFrame"
+  },
+  {
+    "t": "95954.1",
+    "type": "ACTION",
+    "msg": "302/1000: prevFrame"
+  },
+  {
+    "t": "96260.1",
+    "type": "ACTION",
+    "msg": "303/1000: prevFrame"
+  },
+  {
+    "t": "96563.9",
+    "type": "ACTION",
+    "msg": "304/1000: prevFrame"
+  },
+  {
+    "t": "96867.7",
+    "type": "ACTION",
+    "msg": "305/1000: collapseBottomSheet"
+  },
+  {
+    "t": "97169.5",
+    "type": "ACTION",
+    "msg": "306/1000: nextFrame"
+  },
+  {
+    "t": "97472.0",
+    "type": "ACTION",
+    "msg": "307/1000: seekAudioRandom"
+  },
+  {
+    "t": "97778.0",
+    "type": "ACTION",
+    "msg": "308/1000: nextFrame"
+  },
+  {
+    "t": "98081.9",
+    "type": "ACTION",
+    "msg": "309/1000: toggleBottomSheet"
+  },
+  {
+    "t": "98384.2",
+    "type": "ACTION",
+    "msg": "310/1000: cinemaToggle"
+  },
+  {
+    "t": "98701.0",
+    "type": "ACTION",
+    "msg": "311/1000: nextFrame"
+  },
+  {
+    "t": "99006.0",
+    "type": "ACTION",
+    "msg": "312/1000: nextFrame"
+  },
+  {
+    "t": "99310.1",
+    "type": "ACTION",
+    "msg": "313/1000: nextFrame"
+  },
+  {
+    "t": "99612.4",
+    "type": "ACTION",
+    "msg": "314/1000: seekAudioRandom"
+  },
+  {
+    "t": "99913.7",
+    "type": "ACTION",
+    "msg": "315/1000: expandBottomSheet"
+  },
+  {
+    "t": "100220.5",
+    "type": "ACTION",
+    "msg": "316/1000: hideBottomSheet"
+  },
+  {
+    "t": "100521.5",
+    "type": "ACTION",
+    "msg": "317/1000: toggleBottomSheet"
+  },
+  {
+    "t": "100825.1",
+    "type": "ACTION",
+    "msg": "318/1000: toggleVideoTrack"
+  },
+  {
+    "t": "101129.9",
+    "type": "ACTION",
+    "msg": "319/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "101435.1",
+    "type": "ACTION",
+    "msg": "320/1000: nextFrame"
+  },
+  {
+    "t": "101738.1",
+    "type": "ACTION",
+    "msg": "321/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "102041.0",
+    "type": "ACTION",
+    "msg": "322/1000: collapseBottomSheet"
+  },
+  {
+    "t": "102344.8",
+    "type": "ACTION",
+    "msg": "323/1000: toggleBottomSheet"
+  },
+  {
+    "t": "102653.2",
+    "type": "ACTION",
+    "msg": "324/1000: hideBottomSheet"
+  },
+  {
+    "t": "102956.6",
+    "type": "ACTION",
+    "msg": "325/1000: expandBottomSheet"
+  },
+  {
+    "t": "103264.3",
+    "type": "ACTION",
+    "msg": "326/1000: hideBottomSheet"
+  },
+  {
+    "t": "103575.6",
+    "type": "ACTION",
+    "msg": "327/1000: toggleVideoTrack"
+  },
+  {
+    "t": "116626.4",
+    "type": "ACTION",
+    "msg": "328/1000: nextFrame"
+  },
+  {
+    "t": "116930.7",
+    "type": "ACTION",
+    "msg": "329/1000: pauseResumeAudio"
+  },
+  {
+    "t": "117234.4",
+    "type": "ACTION",
+    "msg": "330/1000: expandBottomSheet"
+  },
+  {
+    "t": "117538.5",
+    "type": "ACTION",
+    "msg": "331/1000: nextFrame"
+  },
+  {
+    "t": "117856.7",
+    "type": "ACTION",
+    "msg": "332/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "118159.9",
+    "type": "ACTION",
+    "msg": "333/1000: hideBottomSheet"
+  },
+  {
+    "t": "118465.0",
+    "type": "ACTION",
+    "msg": "334/1000: simulateResize"
+  },
+  {
+    "t": "118773.3",
+    "type": "ACTION",
+    "msg": "335/1000: prevFrame"
+  },
+  {
+    "t": "119076.4",
+    "type": "ACTION",
+    "msg": "336/1000: nextFrame"
+  },
+  {
+    "t": "119385.3",
+    "type": "ACTION",
+    "msg": "337/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "119690.4",
+    "type": "ACTION",
+    "msg": "338/1000: toggleVideoTrack"
+  },
+  {
+    "t": "119992.0",
+    "type": "ACTION",
+    "msg": "339/1000: pauseResumeAudio"
+  },
+  {
+    "t": "120295.8",
+    "type": "ACTION",
+    "msg": "340/1000: prevFrame"
+  },
+  {
+    "t": "120597.9",
+    "type": "ACTION",
+    "msg": "341/1000: toggleBottomSheet"
+  },
+  {
+    "t": "120901.9",
+    "type": "ACTION",
+    "msg": "342/1000: toggleBottomSheet"
+  },
+  {
+    "t": "121204.6",
+    "type": "ACTION",
+    "msg": "343/1000: nextFrame"
+  },
+  {
+    "t": "121514.4",
+    "type": "ACTION",
+    "msg": "344/1000: prevFrame"
+  },
+  {
+    "t": "121825.0",
+    "type": "ACTION",
+    "msg": "345/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "122143.1",
+    "type": "ACTION",
+    "msg": "346/1000: nextFrame"
+  },
+  {
+    "t": "122449.4",
+    "type": "ACTION",
+    "msg": "347/1000: prevFrame"
+  },
+  {
+    "t": "122767.5",
+    "type": "ACTION",
+    "msg": "348/1000: toggleVideoTrack"
+  },
+  {
+    "t": "123074.9",
+    "type": "ACTION",
+    "msg": "349/1000: pauseResumeAudio"
+  },
+  {
+    "t": "123385.6",
+    "type": "ACTION",
+    "msg": "350/1000: pauseResumeAudio"
+  },
+  {
+    "t": "123707.2",
+    "type": "ACTION",
+    "msg": "351/1000: nextFrame"
+  },
+  {
+    "t": "124025.9",
+    "type": "ACTION",
+    "msg": "352/1000: toggleVideoTrack"
+  },
+  {
+    "t": "124330.0",
+    "type": "ACTION",
+    "msg": "353/1000: hideBottomSheet"
+  },
+  {
+    "t": "124649.3",
+    "type": "ACTION",
+    "msg": "354/1000: hideBottomSheet"
+  },
+  {
+    "t": "124950.2",
+    "type": "ACTION",
+    "msg": "355/1000: collapseBottomSheet"
+  },
+  {
+    "t": "125255.5",
+    "type": "ACTION",
+    "msg": "356/1000: collapseBottomSheet"
+  },
+  {
+    "t": "125558.5",
+    "type": "ACTION",
+    "msg": "357/1000: prevFrame"
+  },
+  {
+    "t": "125861.0",
+    "type": "ACTION",
+    "msg": "358/1000: startGameIfAvailable"
+  },
+  {
+    "t": "126165.9",
+    "type": "ACTION",
+    "msg": "359/1000: hideBottomSheet"
+  },
+  {
+    "t": "126468.2",
+    "type": "ACTION",
+    "msg": "360/1000: collapseBottomSheet"
+  },
+  {
+    "t": "126781.9",
+    "type": "ACTION",
+    "msg": "361/1000: pauseResumeAudio"
+  },
+  {
+    "t": "127084.2",
+    "type": "ACTION",
+    "msg": "362/1000: toggleBottomSheet"
+  },
+  {
+    "t": "127390.1",
+    "type": "ACTION",
+    "msg": "363/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "127714.6",
+    "type": "ACTION",
+    "msg": "364/1000: startGameIfAvailable"
+  },
+  {
+    "t": "128021.2",
+    "type": "ACTION",
+    "msg": "365/1000: toggleBottomSheet"
+  },
+  {
+    "t": "128338.5",
+    "type": "ACTION",
+    "msg": "366/1000: cinemaToggle"
+  },
+  {
+    "t": "128642.7",
+    "type": "ACTION",
+    "msg": "367/1000: pauseResumeAudio"
+  },
+  {
+    "t": "128947.2",
+    "type": "ACTION",
+    "msg": "368/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "129251.2",
+    "type": "ACTION",
+    "msg": "369/1000: nextFrame"
+  },
+  {
+    "t": "129557.2",
+    "type": "ACTION",
+    "msg": "370/1000: toggleVideoTrack"
+  },
+  {
+    "t": "129863.6",
+    "type": "ACTION",
+    "msg": "371/1000: seekAudioRandom"
+  },
+  {
+    "t": "130165.5",
+    "type": "ACTION",
+    "msg": "372/1000: nextFrame"
+  },
+  {
+    "t": "130469.0",
+    "type": "ACTION",
+    "msg": "373/1000: nextFrame"
+  },
+  {
+    "t": "130776.4",
+    "type": "ACTION",
+    "msg": "374/1000: toggleBottomSheet"
+  },
+  {
+    "t": "131083.4",
+    "type": "ACTION",
+    "msg": "375/1000: toggleVideoTrack"
+  },
+  {
+    "t": "131406.3",
+    "type": "ACTION",
+    "msg": "376/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "131724.6",
+    "type": "ACTION",
+    "msg": "377/1000: nextFrame"
+  },
+  {
+    "t": "132038.0",
+    "type": "ACTION",
+    "msg": "378/1000: nextFrame"
+  },
+  {
+    "t": "132354.6",
+    "type": "ACTION",
+    "msg": "379/1000: nextFrame"
+  },
+  {
+    "t": "132656.1",
+    "type": "ACTION",
+    "msg": "380/1000: nextFrame"
+  },
+  {
+    "t": "132960.5",
+    "type": "ACTION",
+    "msg": "381/1000: prevFrame"
+  },
+  {
+    "t": "133267.0",
+    "type": "ACTION",
+    "msg": "382/1000: toggleBottomSheet"
+  },
+  {
+    "t": "133580.8",
+    "type": "ACTION",
+    "msg": "383/1000: nextFrame"
+  },
+  {
+    "t": "133889.6",
+    "type": "ACTION",
+    "msg": "384/1000: toggleBottomSheet"
+  },
+  {
+    "t": "134194.2",
+    "type": "ACTION",
+    "msg": "385/1000: toggleVideoTrack"
+  },
+  {
+    "t": "134498.2",
+    "type": "ACTION",
+    "msg": "386/1000: nextFrame"
+  },
+  {
+    "t": "134807.5",
+    "type": "ACTION",
+    "msg": "387/1000: nextFrame"
+  },
+  {
+    "t": "135115.3",
+    "type": "ACTION",
+    "msg": "388/1000: nextFrame"
+  },
+  {
+    "t": "135424.1",
+    "type": "ACTION",
+    "msg": "389/1000: nextFrame"
+  },
+  {
+    "t": "135727.5",
+    "type": "ACTION",
+    "msg": "390/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "136031.1",
+    "type": "ACTION",
+    "msg": "391/1000: toggleVideoTrack"
+  },
+  {
+    "t": "136334.9",
+    "type": "ACTION",
+    "msg": "392/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "136640.1",
+    "type": "ACTION",
+    "msg": "393/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "136943.0",
+    "type": "ACTION",
+    "msg": "394/1000: nextFrame"
+  },
+  {
+    "t": "137247.1",
+    "type": "ACTION",
+    "msg": "395/1000: seekAudioRandom"
+  },
+  {
+    "t": "137551.1",
+    "type": "ACTION",
+    "msg": "396/1000: toggleVideoTrack"
+  },
+  {
+    "t": "137855.4",
+    "type": "ACTION",
+    "msg": "397/1000: nextFrame"
+  },
+  {
+    "t": "138160.6",
+    "type": "ACTION",
+    "msg": "398/1000: toggleVideoTrack"
+  },
+  {
+    "t": "138465.6",
+    "type": "ACTION",
+    "msg": "399/1000: collapseBottomSheet"
+  },
+  {
+    "t": "138778.1",
+    "type": "ACTION",
+    "msg": "400/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "139084.9",
+    "type": "ACTION",
+    "msg": "401/1000: toggleVideoTrack"
+  },
+  {
+    "t": "139390.8",
+    "type": "ACTION",
+    "msg": "402/1000: toggleBottomSheet"
+  },
+  {
+    "t": "139693.1",
+    "type": "ACTION",
+    "msg": "403/1000: nextFrame"
+  },
+  {
+    "t": "140001.7",
+    "type": "ACTION",
+    "msg": "404/1000: nextFrame"
+  },
+  {
+    "t": "140311.1",
+    "type": "ACTION",
+    "msg": "405/1000: nextFrame"
+  },
+  {
+    "t": "140612.3",
+    "type": "ACTION",
+    "msg": "406/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "140914.3",
+    "type": "ACTION",
+    "msg": "407/1000: expandBottomSheet"
+  },
+  {
+    "t": "141222.8",
+    "type": "ACTION",
+    "msg": "408/1000: nextFrame"
+  },
+  {
+    "t": "141532.6",
+    "type": "ACTION",
+    "msg": "409/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "141839.2",
+    "type": "ACTION",
+    "msg": "410/1000: pauseResumeAudio"
+  },
+  {
+    "t": "142141.3",
+    "type": "ACTION",
+    "msg": "411/1000: toggleVideoTrack"
+  },
+  {
+    "t": "142442.5",
+    "type": "ACTION",
+    "msg": "412/1000: toggleVideoTrack"
+  },
+  {
+    "t": "142746.5",
+    "type": "ACTION",
+    "msg": "413/1000: nextFrame"
+  },
+  {
+    "t": "143051.2",
+    "type": "ACTION",
+    "msg": "414/1000: toggleBottomSheet"
+  },
+  {
+    "t": "143362.4",
+    "type": "ACTION",
+    "msg": "415/1000: collapseBottomSheet"
+  },
+  {
+    "t": "143670.3",
+    "type": "ACTION",
+    "msg": "416/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "143972.6",
+    "type": "ACTION",
+    "msg": "417/1000: collapseBottomSheet"
+  },
+  {
+    "t": "144274.4",
+    "type": "ACTION",
+    "msg": "418/1000: hideBottomSheet"
+  },
+  {
+    "t": "144583.2",
+    "type": "ACTION",
+    "msg": "419/1000: simulateResize"
+  },
+  {
+    "t": "144615.3",
+    "type": "INVARIANT_FAIL",
+    "msg": "Step 419",
+    "detail": "BottomSheet overflow: translateY=427.82 > hidden=83"
+  },
+  {
+    "t": "144917.0",
+    "type": "ACTION",
+    "msg": "420/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "145228.8",
+    "type": "ACTION",
+    "msg": "421/1000: pauseResumeAudio"
+  },
+  {
+    "t": "145536.8",
+    "type": "ACTION",
+    "msg": "422/1000: hideBottomSheet"
+  },
+  {
+    "t": "145839.3",
+    "type": "ACTION",
+    "msg": "423/1000: prevFrame"
+  },
+  {
+    "t": "146140.8",
+    "type": "ACTION",
+    "msg": "424/1000: prevFrame"
+  },
+  {
+    "t": "146442.2",
+    "type": "ACTION",
+    "msg": "425/1000: hideBottomSheet"
+  },
+  {
+    "t": "146746.5",
+    "type": "ACTION",
+    "msg": "426/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "147047.6",
+    "type": "ACTION",
+    "msg": "427/1000: nextFrame"
+  },
+  {
+    "t": "147351.3",
+    "type": "ACTION",
+    "msg": "428/1000: nextFrame"
+  },
+  {
+    "t": "147654.6",
+    "type": "ACTION",
+    "msg": "429/1000: expandBottomSheet"
+  },
+  {
+    "t": "147967.6",
+    "type": "ACTION",
+    "msg": "430/1000: toggleBottomSheet"
+  },
+  {
+    "t": "148299.5",
+    "type": "ACTION",
+    "msg": "431/1000: toggleVideoTrack"
+  },
+  {
+    "t": "148601.3",
+    "type": "ACTION",
+    "msg": "432/1000: nextFrame"
+  },
+  {
+    "t": "148915.2",
+    "type": "ACTION",
+    "msg": "433/1000: toggleBottomSheet"
+  },
+  {
+    "t": "149217.4",
+    "type": "ACTION",
+    "msg": "434/1000: prevFrame"
+  },
+  {
+    "t": "149521.9",
+    "type": "ACTION",
+    "msg": "435/1000: nextFrame"
+  },
+  {
+    "t": "149828.4",
+    "type": "ACTION",
+    "msg": "436/1000: toggleVideoTrack"
+  },
+  {
+    "t": "150147.4",
+    "type": "ACTION",
+    "msg": "437/1000: nextFrame"
+  },
+  {
+    "t": "150461.6",
+    "type": "ACTION",
+    "msg": "438/1000: pauseResumeAudio"
+  },
+  {
+    "t": "150769.7",
+    "type": "ACTION",
+    "msg": "439/1000: nextFrame"
+  },
+  {
+    "t": "151073.7",
+    "type": "ACTION",
+    "msg": "440/1000: hideBottomSheet"
+  },
+  {
+    "t": "151379.0",
+    "type": "ACTION",
+    "msg": "441/1000: pauseResumeAudio"
+  },
+  {
+    "t": "151680.6",
+    "type": "ACTION",
+    "msg": "442/1000: toggleVideoTrack"
+  },
+  {
+    "t": "151985.8",
+    "type": "ACTION",
+    "msg": "443/1000: cinemaToggle"
+  },
+  {
+    "t": "152289.9",
+    "type": "ACTION",
+    "msg": "444/1000: toggleVideoTrack"
+  },
+  {
+    "t": "152595.2",
+    "type": "ACTION",
+    "msg": "445/1000: seekAudioRandom"
+  },
+  {
+    "t": "152897.4",
+    "type": "ACTION",
+    "msg": "446/1000: seekAudioRandom"
+  },
+  {
+    "t": "153201.0",
+    "type": "ACTION",
+    "msg": "447/1000: nextFrame"
+  },
+  {
+    "t": "153506.4",
+    "type": "ACTION",
+    "msg": "448/1000: toggleBottomSheet"
+  },
+  {
+    "t": "153810.4",
+    "type": "ACTION",
+    "msg": "449/1000: nextFrame"
+  },
+  {
+    "t": "154118.9",
+    "type": "ACTION",
+    "msg": "450/1000: toggleBottomSheet"
+  },
+  {
+    "t": "154430.3",
+    "type": "ACTION",
+    "msg": "451/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "154738.7",
+    "type": "ACTION",
+    "msg": "452/1000: nextFrame"
+  },
+  {
+    "t": "155050.9",
+    "type": "ACTION",
+    "msg": "453/1000: seekAudioRandom"
+  },
+  {
+    "t": "155356.3",
+    "type": "ACTION",
+    "msg": "454/1000: nextFrame"
+  },
+  {
+    "t": "155664.1",
+    "type": "ACTION",
+    "msg": "455/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "155978.7",
+    "type": "ACTION",
+    "msg": "456/1000: seekAudioRandom"
+  },
+  {
+    "t": "156303.2",
+    "type": "ACTION",
+    "msg": "457/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "156605.3",
+    "type": "ACTION",
+    "msg": "458/1000: seekAudioRandom"
+  },
+  {
+    "t": "156915.2",
+    "type": "ACTION",
+    "msg": "459/1000: nextFrame"
+  },
+  {
+    "t": "157225.9",
+    "type": "ACTION",
+    "msg": "460/1000: cinemaToggle"
+  },
+  {
+    "t": "157535.7",
+    "type": "ACTION",
+    "msg": "461/1000: toggleBottomSheet"
+  },
+  {
+    "t": "157836.3",
+    "type": "ACTION",
+    "msg": "462/1000: pauseResumeAudio"
+  },
+  {
+    "t": "158145.9",
+    "type": "ACTION",
+    "msg": "463/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "158450.4",
+    "type": "ACTION",
+    "msg": "464/1000: expandBottomSheet"
+  },
+  {
+    "t": "158755.6",
+    "type": "ACTION",
+    "msg": "465/1000: nextFrame"
+  },
+  {
+    "t": "159086.7",
+    "type": "ACTION",
+    "msg": "466/1000: toggleVideoTrack"
+  },
+  {
+    "t": "159397.4",
+    "type": "ACTION",
+    "msg": "467/1000: nextFrame"
+  },
+  {
+    "t": "159712.3",
+    "type": "ACTION",
+    "msg": "468/1000: nextFrame"
+  },
+  {
+    "t": "160016.4",
+    "type": "ACTION",
+    "msg": "469/1000: cinemaToggle"
+  },
+  {
+    "t": "160320.2",
+    "type": "ACTION",
+    "msg": "470/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "160632.4",
+    "type": "ACTION",
+    "msg": "471/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "160939.0",
+    "type": "ACTION",
+    "msg": "472/1000: nextFrame"
+  },
+  {
+    "t": "161247.4",
+    "type": "ACTION",
+    "msg": "473/1000: seekAudioRandom"
+  },
+  {
+    "t": "161558.4",
+    "type": "ACTION",
+    "msg": "474/1000: expandBottomSheet"
+  },
+  {
+    "t": "161868.8",
+    "type": "ACTION",
+    "msg": "475/1000: cinemaToggle"
+  },
+  {
+    "t": "162180.0",
+    "type": "ACTION",
+    "msg": "476/1000: nextFrame"
+  },
+  {
+    "t": "162482.5",
+    "type": "ACTION",
+    "msg": "477/1000: clickSubtitleOverlay"
+  },
+  {
+    "t": "162786.4",
+    "type": "ACTION",
+    "msg": "478/1000: toggleNarrationTrack"
+  },
+  {
+    "t": "163088.1",
+    "type": "ACTION",
+    "msg": "479/1000: seekAudioRandom"
+  },
+  {
+    "t": "163390.3",
+    "type": "ACTION",
+    "msg": "480/1000: toggleVideoTrack"
+  },
+  {
+    "t": "163697.7",
+    "type": "DONE",
+    "msg": "Finished 480 steps"
+  }
+]

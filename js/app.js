@@ -349,7 +349,7 @@ const BottomSheet = {
       collapsed: Math.max(0, fullH - collapsedH),
       hidden: Math.max(0, fullH - handleH)
     };
-    this.applyTranslateY(this.snapPoints[this.state], true);
+    this.applyTranslateY(this.snapPoints[this.state], false);
   },
 
   getTranslateY() {
