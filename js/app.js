@@ -294,9 +294,14 @@ const BottomSheet = {
     this.initDrag();
   },
 
-  toggle() { this.state === 'collapsed' ? this.expand() : this.collapse(); },
-  expand() { this.state = 'expanded'; this.el.classList.remove('collapsed'); },
-  collapse() { this.state = 'collapsed'; this.el.classList.add('collapsed'); },
+  toggle() {
+    if (this.state === 'hidden') this.collapse();
+    else if (this.state === 'collapsed') this.expand();
+    else this.collapse();
+  },
+  expand() { this.state = 'expanded'; this.el.classList.remove('collapsed', 'hidden'); },
+  collapse() { this.state = 'collapsed'; this.el.classList.add('collapsed'); this.el.classList.remove('hidden'); },
+  hide() { this.state = 'hidden'; this.el.classList.add('hidden'); this.el.classList.remove('collapsed'); },
 
   setSubtitle(text, icon) {
     if (this.subtitleText) this.subtitleText.textContent = text || '';
@@ -354,17 +359,74 @@ const BottomSheet = {
   },
 
   initDrag() {
+    if (!this.dragHandle) return;
     let startY = 0;
-    const onStart = (y) => { startY = y; };
-    const onEnd = (y) => {
-      const delta = startY - y;
-      if (delta > 40) this.expand();
-      else if (delta < -40) this.collapse();
+    let startMaxHeight = 0;
+    let isDragging = false;
+    const HIDDEN_H = 12;
+
+    const getCollapsedH = () => {
+      const h = parseFloat(getComputedStyle(this.el).maxHeight);
+      return isNaN(h) ? 86 : h;
     };
+    const getExpandedH = () => Math.min(window.innerHeight * 0.78, window.innerHeight - 80);
+
+    const onStart = (y) => {
+      startY = y;
+      isDragging = true;
+      const collapsedH = getCollapsedH();
+      const expandedH = getExpandedH();
+      if (this.el.classList.contains('hidden')) startMaxHeight = HIDDEN_H;
+      else if (this.el.classList.contains('collapsed')) startMaxHeight = collapsedH;
+      else startMaxHeight = expandedH;
+      this.el.style.transition = 'none';
+    };
+
+    const onMove = (y) => {
+      if (!isDragging) return;
+      const delta = startY - y;
+      const expandedH = getExpandedH();
+      const newHeight = Math.max(HIDDEN_H, Math.min(expandedH, startMaxHeight + delta));
+      this.el.style.maxHeight = newHeight + 'px';
+    };
+
+    const onEnd = (y) => {
+      if (!isDragging) return;
+      isDragging = false;
+      this.el.style.transition = '';
+      this.el.style.maxHeight = '';
+      const delta = startY - y;
+      const wasHidden = this.el.classList.contains('hidden');
+      const wasCollapsed = this.el.classList.contains('collapsed');
+
+      if (wasHidden) {
+        if (delta > 20) this.collapse();
+        else this.hide();
+      } else if (wasCollapsed) {
+        if (delta > 50) this.expand();
+        else if (delta < -20) this.hide();
+        else this.collapse();
+      } else {
+        if (delta < -50) this.collapse();
+        else this.expand();
+      }
+    };
+
     this.dragHandle.addEventListener('touchstart', (e) => onStart(e.touches[0].clientY), {passive: true});
+    this.dragHandle.addEventListener('touchmove', (e) => onMove(e.touches[0].clientY), {passive: true});
     this.dragHandle.addEventListener('touchend', (e) => onEnd(e.changedTouches[0].clientY), {passive: true});
-    this.dragHandle.addEventListener('mousedown', (e) => onStart(e.clientY));
-    this.dragHandle.addEventListener('mouseup', (e) => onEnd(e.clientY));
+
+    this.dragHandle.addEventListener('mousedown', (e) => {
+      onStart(e.clientY);
+      const moveHandler = (ev) => onMove(ev.clientY);
+      const upHandler = (ev) => {
+        onEnd(ev.clientY);
+        window.removeEventListener('mousemove', moveHandler);
+        window.removeEventListener('mouseup', upHandler);
+      };
+      window.addEventListener('mousemove', moveHandler);
+      window.addEventListener('mouseup', upHandler);
+    });
   }
 };
 
@@ -454,6 +516,11 @@ const App = (function() {
     typewriterEndedForFrame = false;
   }
 
+  function clearDialogueTimeouts() {
+    dialogueTimeouts.forEach(id => clearTimeout(id));
+    dialogueTimeouts = [];
+  }
+
   function checkFrameEnd() {
     if (audioEndedForFrame && typewriterEndedForFrame) {
       const frameData = frames[currentFrameIdx];
@@ -540,12 +607,9 @@ const App = (function() {
       PlayerProfile.renderBadge();
     }
 
-    // Reset UI hide timer
+    // Ensure UI is visible on frame change
     clearTimeout(uiHideTimeout);
     episodeViewer.classList.remove('ui-hidden');
-    uiHideTimeout = setTimeout(() => {
-      if (BottomSheet.state === 'collapsed') episodeViewer.classList.add('ui-hidden');
-    }, 3000);
   }
 
   function animateTo(idx, direction) {
@@ -731,7 +795,7 @@ const App = (function() {
     }
 
     frameContainer.addEventListener('touchstart', e => {
-      if (e.target.closest('.video-play-btn')) return;
+      if (e.target.closest('.video-play-btn, .bottom-sheet, .frame-top-bar')) return;
       onStart(e.touches[0].clientY, e.touches[0].clientX);
     }, {passive: true});
     frameContainer.addEventListener('touchend', e => {
@@ -740,7 +804,7 @@ const App = (function() {
     }, {passive: true});
 
     frameContainer.addEventListener('mousedown', e => {
-      if (e.target.closest('.video-play-btn')) return;
+      if (e.target.closest('.video-play-btn, .bottom-sheet, .frame-top-bar')) return;
       onStart(e.clientY, e.clientX);
     });
     frameContainer.addEventListener('mouseup', e => {
@@ -750,27 +814,17 @@ const App = (function() {
     frameContainer.addEventListener('mouseleave', () => { isDragging = false; });
   }
 
-  // ─── UI HIDE ───
-  function initUIHide() {
-    if (!episodeViewer) return;
-    episodeViewer.addEventListener('click', (e) => {
-      // Ignore clicks on interactive elements
-      if (e.target.closest('.frame-top-bar, .bottom-sheet, .video-play-btn, .video-layer, .bs-controls, .bs-expanded')) return;
-      episodeViewer.classList.toggle('ui-hidden');
-      if (!episodeViewer.classList.contains('ui-hidden')) {
-        clearTimeout(uiHideTimeout);
-        uiHideTimeout = setTimeout(() => {
-          if (BottomSheet.state === 'collapsed') episodeViewer.classList.add('ui-hidden');
-        }, 3000);
-      }
-    });
-  }
-
   // ─── INIT ───
   function init() {
     initSwipe();
-    initUIHide();
     BottomSheet.init();
+
+    const cinemaToggleBtn = document.getElementById('cinemaToggleBtn');
+    if (cinemaToggleBtn) {
+      cinemaToggleBtn.addEventListener('click', () => {
+        episodeViewer.classList.toggle('ui-hidden');
+      });
+    }
 
     if (startBtn && splash) {
       startBtn.addEventListener('click', () => {

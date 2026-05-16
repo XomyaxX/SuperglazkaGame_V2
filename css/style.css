@@ -215,6 +215,9 @@ body {
   z-index: 100;
   display: none;
   flex-direction: column;
+  isolation: isolate;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 #episode-viewer.active { display: flex; }
@@ -304,7 +307,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 72px;
   gap: 8px;
   transition: opacity .6s var(--ease-smooth);
 }
@@ -355,6 +359,16 @@ body {
 }
 .video-play-btn:active { transform: translate(-50%, -50%) scale(0.95); }
 
+/* Video layer */
+.video-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+
 /* Video element inside layer */
 .video-layer video {
   position: absolute;
@@ -362,6 +376,8 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+  cursor: pointer;
   opacity: 0;
   z-index: 3;
   transition: opacity .6s var(--ease-smooth);
@@ -907,24 +923,6 @@ body {
   .tr-title { font-size: 22px; }
   .win-title { font-size: 24px; }
   .stats-title { font-size: 20px; }
-}
-
-/* ═══ NEW FULL-SCREEN VIDEO FRAME LAYOUT ═══ */
-.video-layer {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  background: #000;
-}
-
-.video-layer video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  cursor: pointer;
 }
 
 /* Hide old narration & phase elements inside frames */
@@ -1584,6 +1582,28 @@ body {
   transform: scale(1.05);
 }
 
+.cinema-toggle-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #fff;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .3s, transform .3s;
+}
+.cinema-toggle-btn:hover {
+  background: rgba(255,255,255,0.15);
+  transform: scale(1.1);
+}
+
 /* ─── BOTTOM SHEET ─── */
 .bottom-sheet {
   position: absolute;
@@ -1625,13 +1645,29 @@ body {
   overflow: hidden;
 }
 
+.bottom-sheet.hidden {
+  max-height: 12px;
+  padding: 4px 16px 0;
+  overflow: hidden;
+}
+.bottom-sheet.hidden .bs-subtitle,
+.bottom-sheet.hidden .bs-controls,
+.bottom-sheet.hidden .bs-expanded {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .bottom-sheet.collapsed .bs-subtitle {
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+.bottom-sheet:not(.collapsed) .bs-subtitle {
+  display: none;
+}
 
+/* Drag handle */
 /* Drag handle */
 .bs-drag-handle {
   align-self: center;
@@ -1643,7 +1679,6 @@ body {
   cursor: grab;
   flex-shrink: 0;
 }
-
 .bs-drag-handle:active {
   cursor: grabbing;
 }
@@ -1716,53 +1751,6 @@ body {
 @keyframes audioPulse {
   0%, 100% { box-shadow: 0 0 20px rgba(124,58,237,0.4); }
   50% { box-shadow: 0 0 35px rgba(6,182,212,0.7); }
-}
-
-.bs-game-dock {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1;
-  justify-content: center;
-}
-
-.bs-game-dock .game-chip {
-  width: 38px;
-  height: 38px;
-  font-size: 18px;
-}
-
-.bs-next-btn {
-  background: var(--gradient-primary);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius-xl);
-  padding: 10px 20px;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 900;
-  cursor: pointer;
-  box-shadow: 0 4px 20px rgba(124,58,237,0.4);
-  transition: all .2s var(--ease-spring);
-  white-space: nowrap;
-  flex-shrink: 0;
-  opacity: 0.35;
-  pointer-events: none;
-}
-
-.bs-next-btn.active {
-  opacity: 1;
-  pointer-events: auto;
-  animation: nextPulse 2s ease-in-out infinite;
-}
-
-@keyframes nextPulse {
-  0%, 100% { box-shadow: 0 4px 20px rgba(124,58,237,0.4); }
-  50% { box-shadow: 0 4px 30px rgba(6,182,212,0.6); }
-}
-
-.bs-next-btn:hover {
-  transform: scale(1.05);
 }
 
 /* ─── EXPANDED CONTENT ─── */
@@ -2060,18 +2048,9 @@ body {
   .bs-subtitle {
     font-size: 13px;
   }
-  .bs-next-btn {
-    padding: 8px 16px;
-    font-size: 13px;
-  }
   .bs-audio-toggle {
     width: 36px;
     height: 36px;
-    font-size: 16px;
-  }
-  .bs-game-dock .game-chip {
-    width: 34px;
-    height: 34px;
     font-size: 16px;
   }
   .bs-expanded {

@@ -96,6 +96,7 @@
   <div class="frame-top-bar" id="frameTopBar">
     <button class="back-btn" id="viewerBackBtn" title="Назад в меню">←</button>
     <div class="progress-dots" id="progressDots"></div>
+    <button class="cinema-toggle-btn" id="cinemaToggleBtn" title="Скрыть/показать интерфейс">👁️</button>
     <button class="profile-btn" id="viewerProfileBtn" title="Профиль">
       <span>👤</span>
       <span class="profile-coins-val">0</span>
@@ -110,15 +111,13 @@
        BOTTOM SHEET
        ═══════════════════════════════════════════════════════════ -->
   <div class="bottom-sheet collapsed" id="bottomSheet">
-    <div class="bs-drag-handle" id="bsDragHandle">⠿</div>
+    <div class="bs-drag-handle" id="bsDragHandle"></div>
     <div class="bs-subtitle" id="bsSubtitle">
       <span class="bs-subtitle-icon" id="bsSubtitleIcon">🎙️</span>
       <span class="bs-subtitle-text" id="bsSubtitleText"></span>
     </div>
     <div class="bs-controls" id="bsControls">
       <button class="bs-audio-toggle" id="bsAudioToggle" title="Аудио меню">🔊</button>
-      <div class="bs-game-dock" id="bsGameDock"></div>
-      <button class="bs-next-btn" id="bsNextBtn">Далее →</button>
     </div>
     <div class="bs-expanded" id="bsExpanded">
       <div class="bs-narrator-full" id="bsNarratorFull"></div>
