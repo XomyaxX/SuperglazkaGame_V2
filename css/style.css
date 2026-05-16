@@ -1604,6 +1604,20 @@ body {
   transform: scale(1.1);
 }
 
+.bs-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 24;
+  background: rgba(0,0,0,0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+}
+.bs-backdrop.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 /* ─── BOTTOM SHEET ─── */
 .bottom-sheet {
   position: absolute;
@@ -1616,13 +1630,16 @@ body {
   -webkit-backdrop-filter: blur(24px);
   border-top: 1px solid rgba(255,255,255,0.08);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  padding: 8px 16px 16px;
+  padding: 8px 16px max(16px, env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   gap: 6px;
-  transition: max-height .45s var(--ease-spring), padding .3s;
   max-height: 78vh;
   overflow: hidden;
+  transform: translateY(0);
+  will-change: transform;
+  touch-action: none;
+  transition: transform .35s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .bottom-sheet.hidden-ui {
@@ -1632,12 +1649,7 @@ body {
   transition: opacity .4s, transform .4s;
 }
 
-/* Collapsed state */
-.bottom-sheet.collapsed {
-  max-height: 86px;
-  padding-bottom: max(12px, env(safe-area-inset-bottom));
-}
-
+/* Collapsed state marker */
 .bottom-sheet.collapsed .bs-expanded {
   opacity: 0;
   pointer-events: none;
@@ -1645,11 +1657,7 @@ body {
   overflow: hidden;
 }
 
-.bottom-sheet.hidden {
-  max-height: 12px;
-  padding: 4px 16px 0;
-  overflow: hidden;
-}
+/* Hidden state marker */
 .bottom-sheet.hidden .bs-subtitle,
 .bottom-sheet.hidden .bs-controls,
 .bottom-sheet.hidden .bs-expanded {
@@ -1658,10 +1666,10 @@ body {
 }
 
 .bottom-sheet.collapsed .bs-subtitle {
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
+  display: block;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 .bottom-sheet:not(.collapsed) .bs-subtitle {
   display: none;
@@ -1760,6 +1768,7 @@ body {
   gap: 14px;
   margin-top: 8px;
   overflow-y: auto;
+  touch-action: pan-y;
   opacity: 1;
   transition: opacity .3s;
   flex-shrink: 0;

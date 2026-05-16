@@ -249,9 +249,11 @@ const AudioController = {
 // ═══════════════════════════════════════════════════════════
 const BottomSheet = {
   state: 'collapsed',
+  snapPoints: { expanded: 0, collapsed: 0, hidden: 0 },
 
   init() {
     this.el = document.getElementById('bottomSheet');
+    this.backdrop = document.getElementById('bsBackdrop');
     this.dragHandle = document.getElementById('bsDragHandle');
     this.subtitleText = document.getElementById('bsSubtitleText');
     this.subtitleIcon = document.getElementById('bsSubtitleIcon');
@@ -262,7 +264,11 @@ const BottomSheet = {
     this.navNextBtn = document.getElementById('bsNavNextBtn');
     this.prevBtn = document.getElementById('bsPrevBtn');
 
-    this.dragHandle.addEventListener('click', () => this.toggle());
+    this.recalcSnapPoints();
+    window.addEventListener('resize', () => this.recalcSnapPoints());
+
+    if (this.dragHandle) this.dragHandle.addEventListener('click', () => this.toggle());
+    if (this.backdrop) this.backdrop.addEventListener('click', () => this.collapse());
     this.el.addEventListener('click', (e) => {
       if (e.target === this.el || e.target.classList.contains('bs-subtitle')) {
         this.expand();
@@ -294,14 +300,65 @@ const BottomSheet = {
     this.initDrag();
   },
 
+  recalcSnapPoints() {
+    if (!this.el) return;
+    const fullH = this.el.offsetHeight;
+    const collapsedH = 86; // approximate visible height in collapsed mode
+    const handleH = this.dragHandle ? this.dragHandle.offsetHeight + 8 : 12;
+    this.snapPoints = {
+      expanded: 0,
+      collapsed: Math.max(0, fullH - collapsedH),
+      hidden: Math.max(0, fullH - handleH)
+    };
+  },
+
+  getTranslateY() {
+    const style = getComputedStyle(this.el).transform;
+    if (style === 'none') return 0;
+    const m = style.match(/matrix\(([^)]+)\)/);
+    if (m) {
+      const vals = m[1].split(',').map(v => parseFloat(v.trim()));
+      return vals[5] || 0;
+    }
+    const m2 = style.match(/translateY\(([^)]+)\)/);
+    if (m2) return parseFloat(m2[1]);
+    return 0;
+  },
+
+  applyTranslateY(y, animate) {
+    if (animate) this.el.style.transition = '';
+    else this.el.style.transition = 'none';
+    this.el.style.transform = `translateY(${Math.round(y)}px)`;
+  },
+
   toggle() {
     if (this.state === 'hidden') this.collapse();
     else if (this.state === 'collapsed') this.expand();
     else this.collapse();
   },
-  expand() { this.state = 'expanded'; this.el.classList.remove('collapsed', 'hidden'); },
-  collapse() { this.state = 'collapsed'; this.el.classList.add('collapsed'); this.el.classList.remove('hidden'); },
-  hide() { this.state = 'hidden'; this.el.classList.add('hidden'); this.el.classList.remove('collapsed'); },
+
+  expand() {
+    this.state = 'expanded';
+    this.el.classList.remove('collapsed', 'hidden');
+    this.applyTranslateY(this.snapPoints.expanded, true);
+    if (this.backdrop) this.backdrop.classList.add('visible');
+  },
+
+  collapse() {
+    this.state = 'collapsed';
+    this.el.classList.add('collapsed');
+    this.el.classList.remove('hidden');
+    this.applyTranslateY(this.snapPoints.collapsed, true);
+    if (this.backdrop) this.backdrop.classList.remove('visible');
+  },
+
+  hide() {
+    this.state = 'hidden';
+    this.el.classList.add('hidden');
+    this.el.classList.remove('collapsed');
+    this.applyTranslateY(this.snapPoints.hidden, true);
+    if (this.backdrop) this.backdrop.classList.remove('visible');
+  },
 
   setSubtitle(text, icon) {
     if (this.subtitleText) this.subtitleText.textContent = text || '';
@@ -359,70 +416,100 @@ const BottomSheet = {
   },
 
   initDrag() {
-    if (!this.dragHandle) return;
+    if (!this.el) return;
     let startY = 0;
-    let startMaxHeight = 0;
+    let startTranslateY = 0;
+    let startTime = 0;
     let isDragging = false;
-    const HIDDEN_H = 12;
-
-    const getCollapsedH = () => {
-      const h = parseFloat(getComputedStyle(this.el).maxHeight);
-      return isNaN(h) ? 86 : h;
-    };
-    const getExpandedH = () => Math.min(window.innerHeight * 0.78, window.innerHeight - 80);
+    let rafId = null;
 
     const onStart = (y, target) => {
+      if (target && target.closest('.bs-expanded')) return;
       if (target && target.closest('button, input, .bs-toggle, .bs-game-chip, .bs-audio-panel, select, textarea')) return;
       startY = y;
+      startTime = performance.now();
+      startTranslateY = this.getTranslateY();
       isDragging = true;
-      const collapsedH = getCollapsedH();
-      const expandedH = getExpandedH();
-      if (this.el.classList.contains('hidden')) startMaxHeight = HIDDEN_H;
-      else if (this.el.classList.contains('collapsed')) startMaxHeight = collapsedH;
-      else startMaxHeight = expandedH;
       this.el.style.transition = 'none';
+      if (rafId) cancelAnimationFrame(rafId);
     };
 
     const onMove = (y) => {
       if (!isDragging) return;
-      const delta = startY - y;
-      const expandedH = getExpandedH();
-      const newHeight = Math.max(HIDDEN_H, Math.min(expandedH, startMaxHeight + delta));
-      this.el.style.maxHeight = newHeight + 'px';
+      const deltaY = startY - y;
+      let translateY = startTranslateY - deltaY;
+      const minY = this.snapPoints.expanded;
+      const maxY = this.snapPoints.hidden;
+      if (translateY < minY) translateY = minY - (minY - translateY) * 0.3; // rubber band
+      if (translateY > maxY) translateY = maxY + (translateY - maxY) * 0.3; // rubber band
+      this.el.style.transform = `translateY(${Math.round(translateY)}px)`;
     };
 
     const onEnd = (y) => {
       if (!isDragging) return;
       isDragging = false;
-      this.el.style.transition = '';
-      this.el.style.maxHeight = '';
-      const delta = startY - y;
-      if (Math.abs(delta) < 5) return; // treat as click
-      const wasHidden = this.el.classList.contains('hidden');
-      const wasCollapsed = this.el.classList.contains('collapsed');
+      const deltaY = startY - y;
+      const deltaTime = performance.now() - startTime;
+      const velocity = deltaTime > 0 ? deltaY / deltaTime : 0;
+      const minVel = 0.4; // px per ms
 
-      if (wasHidden) {
-        if (delta > 20) this.collapse();
-        else this.hide();
-      } else if (wasCollapsed) {
-        if (delta > 50) this.expand();
-        else if (delta < -20) this.hide();
-        else this.collapse();
-      } else {
-        if (delta < -50) this.collapse();
-        else this.expand();
+      if (Math.abs(deltaY) < 5 && Math.abs(velocity) < minVel) {
+        // treat as click
+        this.el.style.transition = '';
+        return;
       }
+
+      let targetState = this.state;
+      const currentY = this.getTranslateY();
+      const points = this.snapPoints;
+
+      if (Math.abs(velocity) >= minVel) {
+        // velocity-driven snap
+        if (velocity > 0) {
+          // dragged up
+          if (this.state === 'hidden') targetState = 'collapsed';
+          else if (this.state === 'collapsed') targetState = 'expanded';
+        } else {
+          // dragged down
+          if (this.state === 'expanded') targetState = 'collapsed';
+          else if (this.state === 'collapsed') targetState = 'hidden';
+        }
+      } else {
+        // distance-driven snap: nearest point
+        const dists = [
+          { state: 'expanded', val: Math.abs(currentY - points.expanded) },
+          { state: 'collapsed', val: Math.abs(currentY - points.collapsed) },
+          { state: 'hidden', val: Math.abs(currentY - points.hidden) }
+        ];
+        dists.sort((a, b) => a.val - b.val);
+        targetState = dists[0].state;
+      }
+
+      if (targetState === 'expanded') this.expand();
+      else if (targetState === 'collapsed') this.collapse();
+      else this.hide();
     };
 
     this.el.addEventListener('touchstart', (e) => onStart(e.touches[0].clientY, e.target), {passive: true});
-    this.el.addEventListener('touchmove', (e) => onMove(e.touches[0].clientY), {passive: true});
-    this.el.addEventListener('touchend', (e) => onEnd(e.changedTouches[0].clientY), {passive: true});
+    this.el.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => onMove(e.touches[0].clientY));
+    }, {passive: true});
+    this.el.addEventListener('touchend', (e) => {
+      if (rafId) cancelAnimationFrame(rafId);
+      onEnd(e.changedTouches[0].clientY);
+    }, {passive: true});
 
     this.el.addEventListener('mousedown', (e) => {
       onStart(e.clientY, e.target);
       if (!isDragging) return;
-      const moveHandler = (ev) => onMove(ev.clientY);
+      const moveHandler = (ev) => {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => onMove(ev.clientY));
+      };
       const upHandler = (ev) => {
+        if (rafId) cancelAnimationFrame(rafId);
         onEnd(ev.clientY);
         window.removeEventListener('mousemove', moveHandler);
         window.removeEventListener('mouseup', upHandler);
@@ -448,6 +535,7 @@ const App = (function() {
   let audioEndedForFrame = false;
   let typewriterEndedForFrame = false;
   let uiHideTimeout = null;
+  let subtitleSyncCleanup = null;
 
   const mainMenu = document.getElementById('main-menu');
   const episodeViewer = document.getElementById('episode-viewer');
@@ -460,19 +548,20 @@ const App = (function() {
     if (typeWriterInterval) { clearInterval(typeWriterInterval); typeWriterInterval = null; }
   }
 
-  function typeWriter(text, onUpdate, onEnd) {
+  function typeWriter(text, onUpdate, onEnd, delayMs) {
     stopTypeWriter();
     if (!text) { if (onEnd) onEnd(); return; }
+    const words = text.trim().split(/\s+/);
     let i = 0;
     typeWriterInterval = setInterval(() => {
-      if (i < text.length) {
-        if (onUpdate) onUpdate(text.substring(0, i + 1));
+      if (i < words.length) {
+        if (onUpdate) onUpdate(words.slice(0, i + 1).join(' '));
         i++;
       } else {
         stopTypeWriter();
         if (onEnd) onEnd();
       }
-    }, 30);
+    }, delayMs || 350);
   }
 
   // ─── RENDER FRAME ───
@@ -546,6 +635,7 @@ const App = (function() {
     const allFrames = document.querySelectorAll('.frame');
     AudioController.stop();
     stopTypeWriter();
+    if (subtitleSyncCleanup) { subtitleSyncCleanup(); subtitleSyncCleanup = null; }
     clearDialogueTimeouts();
     resetEndFlags();
     BottomSheet.hideNextButton();
@@ -598,10 +688,63 @@ const App = (function() {
 
     const narrationText = frameData?.narration || '';
     if (narrationText) {
-      typeWriter(narrationText,
-        (text) => BottomSheet.setSubtitle(text),
-        () => { onTypewriterEnd(); }
-      );
+      const words = narrationText.trim().split(/\s+/);
+      const wordCount = words.length;
+
+      const fallbackTypewriter = () => {
+        typeWriter(narrationText,
+          (text) => BottomSheet.setSubtitle(text),
+          () => { onTypewriterEnd(); },
+          Math.max(150, Math.min(800, 1000 / 2.2))
+        );
+      };
+
+      const narrationAudio = AudioController.currentAudio;
+      if (narrationAudio && frameData?.audioSrc && narrationAudio.src.includes(frameData.audioSrc)) {
+        const startSync = () => {
+          const duration = narrationAudio.duration;
+          if (!duration || !isFinite(duration)) {
+            fallbackTypewriter();
+            return;
+          }
+
+          const onTimeUpdate = () => {
+            const progress = narrationAudio.currentTime / duration;
+            const wordIdx = Math.min(wordCount - 1, Math.floor(progress * wordCount));
+            BottomSheet.setSubtitle(words.slice(0, wordIdx + 1).join(' '));
+          };
+
+          const onEnded = () => {
+            if (subtitleSyncCleanup) { subtitleSyncCleanup(); subtitleSyncCleanup = null; }
+            BottomSheet.setSubtitle(narrationText);
+            onTypewriterEnd();
+          };
+
+          narrationAudio.addEventListener('timeupdate', onTimeUpdate);
+          narrationAudio.addEventListener('ended', onEnded);
+          subtitleSyncCleanup = () => {
+            narrationAudio.removeEventListener('timeupdate', onTimeUpdate);
+            narrationAudio.removeEventListener('ended', onEnded);
+          };
+
+          onTimeUpdate();
+        };
+
+        if (narrationAudio.readyState >= 1) {
+          startSync();
+        } else {
+          const onMeta = () => { startSync(); narrationAudio.removeEventListener('loadedmetadata', onMeta); };
+          const onErr = () => { fallbackTypewriter(); narrationAudio.removeEventListener('error', onErr); };
+          narrationAudio.addEventListener('loadedmetadata', onMeta);
+          narrationAudio.addEventListener('error', onErr);
+          subtitleSyncCleanup = () => {
+            narrationAudio.removeEventListener('loadedmetadata', onMeta);
+            narrationAudio.removeEventListener('error', onErr);
+          };
+        }
+      } else {
+        fallbackTypewriter();
+      }
     } else {
       typewriterEndedForFrame = true;
     }
@@ -720,6 +863,8 @@ const App = (function() {
     if (frameContainer) frameContainer.innerHTML = frames.map((f, i) => renderFrame(f, i, frames.length)).join('');
     if (mainMenu) mainMenu.classList.add('hidden');
     if (episodeViewer) episodeViewer.classList.add('active');
+    BottomSheet.recalcSnapPoints();
+    BottomSheet.collapse();
     if (typeof PlayerProfile !== 'undefined') PlayerProfile.renderBadge();
     bindFrameEvents();
     showFrame(0, null);
