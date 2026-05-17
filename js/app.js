@@ -134,7 +134,6 @@ const AudioController = {
     if (this.currentAudio && this.state === 'playing') {
       this.currentAudio.pause();
       this.state = 'paused';
-      this._notifyStateChange();
       this.updateUI();
     }
   },
@@ -1044,11 +1043,6 @@ const App = (function() {
       subOverlay.addEventListener('click', (e) => e.stopPropagation());
       subOverlay.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
     }
-
-    AudioController.onStateChange(() => {
-      if (subtitleSyncCleanup) { subtitleSyncCleanup(); subtitleSyncCleanup = null; }
-      SubtitleOverlay.clear();
-    });
 
     const cinemaToggleBtn = document.getElementById('cinemaToggleBtn');
     if (cinemaToggleBtn) {
